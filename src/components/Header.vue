@@ -31,7 +31,7 @@ function cerrarSesion() {
         <div class="col-4">
         
         <div v-if="usuarioAutenticado" class="container text-end">
-          <span>Bienvenido, {{ usuarioAutenticado.usuario }} ({{ usuarioAutenticado.rol }})</span>
+          <span>Bienvenido, {{ usuarioAutenticado.email }} ({{ usuarioAutenticado.rol }})</span>
           <button @click.prevent="cerrarSesion" class="btn btn-danger">Cerrar Sesión</button>
         </div>
       </div>

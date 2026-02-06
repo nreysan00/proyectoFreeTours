@@ -21,7 +21,7 @@ const router = createRouter({
             component: Login
         },
         {
-            path: '/micuenta/:usuario',
+            path: '/micuenta/:email',
             name: 'micuenta',
             component: HomeLogueado
         }
