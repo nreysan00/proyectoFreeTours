@@ -1,3 +1,3 @@
 <template>
-    <h1>FREETOURS</h1>
+    <h1>BIENVENIDO A FREETOURS</h1>
 </template>

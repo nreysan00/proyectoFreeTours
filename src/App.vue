@@ -27,16 +27,16 @@ function actualizaDatosSesion(usuario){
 }
 
 
+
+
 </script>
 
 <template>
   <div class="layout">
 
-    <Header :usuarioAutenticado="datosSesion" @sesionCerrada="actualizaDatosSesion" title="Aplicacion Juana" />
+    <Header :usuarioAutenticado="datosSesion" @sesionCerrada="actualizaDatosSesion" title="FreeTours" />
     <NavBar :datos="datosSesion"/>
     <RouterView @sesionIniciada="actualizaDatosSesion" ></RouterView>
-   
-
     <Footer/>
   </div>
 </template>

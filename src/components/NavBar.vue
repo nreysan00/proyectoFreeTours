@@ -19,10 +19,13 @@ const props = defineProps({
                     <RouterLink to="/">Index</RouterLink>&nbsp;
                 </li>
                 <li v-if="datos == null" class="nav-item">
+                    <RouterLink to="/register">Registro</RouterLink>
+                </li>
+                <li v-if="datos == null" class="nav-item">
                     <RouterLink to="/login">Login</RouterLink>
                 </li>
                 <li v-else class="nav-item">
-                    <RouterLink class="nav-link" :to="`/micuenta/${datos.usuario}`">Mi Cuenta</RouterLink>
+                    <RouterLink class="nav-link" :to="`/micuenta/${datos.email}`">Mi Cuenta</RouterLink>
                 </li>
 
             </ul>

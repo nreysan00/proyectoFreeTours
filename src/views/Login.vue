@@ -8,7 +8,10 @@ const form = ref({ email: '', contraseña: '' });
 const error = ref('');
 
 async function iniciarSesion() {
-  const loginData = form.value;
+  const loginData = {
+    email: form.value.email,
+    contraseña: form.value.contraseña
+  };
 
   fetch(apiURL + 'usuarios?login', {
       method: 'POST',
@@ -22,6 +25,10 @@ async function iniciarSesion() {
       if (data.status === 'success') {
         if (data.status === 'success') {
             console.log('Login exitoso:', data.email);
+            localStorage.setItem("sesion", JSON.stringify(loginData));
+            emit('sesionIniciada', {email: form.value.email, contraseña: form.value.contraseña})
+            error.value = '';
+            router.push({name:"home"});
 
         } else {
             console.log('Error de login:', data.message);

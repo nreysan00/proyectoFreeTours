@@ -2,6 +2,7 @@ import { createRouter, createWebHistory } from 'vue-router'
 import Home from '../views/Home.vue'
 import Login from '../views/Login.vue'
 import HomeLogueado from '@/views/HomeLogueado.vue'
+import Registro from '@/views/Registro.vue'
 
 
 const router = createRouter({
@@ -19,6 +20,11 @@ const router = createRouter({
             // this generates a separate chunk (About.[hash].js) for this route
             // which is lazy-loaded when the route is visited.
             component: Login
+        },
+        {
+            path: '/register',
+            name: 'register',
+            component: Registro
         },
         {
             path: '/micuenta/:email',

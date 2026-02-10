@@ -31,6 +31,7 @@ function cerrarSesion() {
         <div class="col-4">
         
         <div v-if="usuarioAutenticado" class="container text-end">
+          <!-- se deberia mostrar con usuarioAuntenticado.user.nombre y usuarioAuntenticado.user.rol-->
           <span>Bienvenido, {{ usuarioAutenticado.email }} ({{ usuarioAutenticado.rol }})</span>
           <button @click.prevent="cerrarSesion" class="btn btn-danger">Cerrar Sesión</button>
         </div>
