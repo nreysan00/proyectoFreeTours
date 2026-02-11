@@ -25,7 +25,7 @@ function cerrarSesion() {
 
 
 <template>
-    <header class="bg-dark text-white  p-3">
+    <header class="bg-success text-white  p-3">
       <div class="row">
         <h1 class="col-8">{{ title }}</h1>
         <div class="col-4">

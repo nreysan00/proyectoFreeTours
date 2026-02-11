@@ -6,7 +6,7 @@
   
   <style scoped>
   .footer {
-    background: #34495e;
+    background: #198754;
     color: white;
     padding: 1rem;
     text-align: center;

@@ -3,6 +3,8 @@ import Home from '../views/Home.vue'
 import Login from '../views/Login.vue'
 import HomeLogueado from '@/views/HomeLogueado.vue'
 import Registro from '@/views/Registro.vue'
+import Admin from '@/views/Admin.vue'
+import CrearRuta from '@/views/CrearRuta.vue'
 
 
 const router = createRouter({
@@ -30,6 +32,16 @@ const router = createRouter({
             path: '/micuenta/:email',
             name: 'micuenta',
             component: HomeLogueado
+        },
+        {
+            path: '/admin',
+            name: 'admin',
+            component: Admin
+        },
+        {
+            path: '/nuevaruta',
+            name: 'nuevaruta',
+            component: CrearRuta
         }
     ],
 })

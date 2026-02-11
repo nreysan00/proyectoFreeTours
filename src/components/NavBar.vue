@@ -16,18 +16,23 @@ const props = defineProps({
         <div class="collapse navbar-collapse" id="navbarSupportedContent">
             <ul class="navbar-nav mr-auto">
                 <li>
-                    <RouterLink to="/">Index</RouterLink>&nbsp;
+                    <RouterLink to="/">Index</RouterLink>&nbsp;&nbsp;
                 </li>
                 <li v-if="datos == null" class="nav-item">
-                    <RouterLink to="/register">Registro</RouterLink>
+                    <RouterLink to="/register">Registro</RouterLink>&nbsp;&nbsp;
                 </li>
                 <li v-if="datos == null" class="nav-item">
-                    <RouterLink to="/login">Login</RouterLink>
+                    <RouterLink to="/login">Login</RouterLink>&nbsp;&nbsp;
                 </li>
                 <li v-else class="nav-item">
-                    <RouterLink class="nav-link" :to="`/micuenta/${datos.email}`">Mi Cuenta</RouterLink>
+                    <RouterLink class="nav-link" :to="`/micuenta/${datos.email}`">Mi Cuenta</RouterLink>&nbsp;&nbsp;
                 </li>
-
+                <li class="nav-item">
+                    <RouterLink to="/admin">Admin</RouterLink>&nbsp;&nbsp;
+                </li>
+                <li class="nav-item">
+                    <RouterLink to="/nuevaruta">Crea Ruta</RouterLink>&nbsp;&nbsp;
+                </li>
             </ul>
             
         </div>
