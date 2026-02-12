@@ -5,7 +5,7 @@ import HomeLogueado from '@/views/HomeLogueado.vue'
 import Registro from '@/views/Registro.vue'
 import Admin from '@/views/Admin.vue'
 import CrearRuta from '@/views/CrearRuta.vue'
-
+import VerRutas from '@/views/VerRutas.vue'
 
 const router = createRouter({
     history: createWebHistory(import.meta.env.BASE_URL),
@@ -42,6 +42,11 @@ const router = createRouter({
             path: '/nuevaruta',
             name: 'nuevaruta',
             component: CrearRuta
+        },
+        {
+            path: '/rutas',
+            name: 'rutas',
+            component: VerRutas
         }
     ],
 })

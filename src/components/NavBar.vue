@@ -27,12 +27,13 @@ const props = defineProps({
                 <li v-else class="nav-item">
                     <RouterLink class="nav-link" :to="`/micuenta/${datos.email}`">Mi Cuenta</RouterLink>&nbsp;&nbsp;
                 </li>
-                <li class="nav-item">
+                <li v-if="datos.rol == 'admin'" class="nav-item">
                     <RouterLink to="/admin">Admin</RouterLink>&nbsp;&nbsp;
                 </li>
-                <li class="nav-item">
+                <li v-if="datos.rol == 'admin'" class="nav-item">
                     <RouterLink to="/nuevaruta">Crea Ruta</RouterLink>&nbsp;&nbsp;
                 </li>
+                
             </ul>
             
         </div>

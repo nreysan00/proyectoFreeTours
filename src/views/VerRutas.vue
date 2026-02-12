@@ -7,28 +7,25 @@ const route = useRoute();
 console.log(route)
 import { useRoute } from 'vue-router';
 
-if(route.params.rol != 'admin'){
+if(route.params.rol == 'cliente'){
     alert('¡No puedes estar!')
     router.push({ name: "home" });
 }
 
 const error = ref('');
-const usuarios = ref([]);
+const rutas = ref([]);
 const usuarioEdicion = ref(null)
 
-async function listaUsuarios() {
+async function listarRutas() {
 
-  fetch(apiURL + 'usuarios', {
+  fetch(apiURL + 'rutas', {
     method: 'GET',
     })
-    .then(response => response.json())
-    .then(data => {
-        usuarios.value = data;
-        console.log('Usuarios:', data)
-    })
-    .catch(error => console.error('Error:', error));
+.then(response => response.json())
+.then(data => console.log('Rutas:', data))
+.catch(error => console.error('Error:', error));
 }
-listaUsuarios();
+listarRutas();
 
 async function editarRol(id, rol) {
 const updatedRole = {
@@ -72,18 +69,22 @@ async function borrarUsu(id) {
             <thead>
                 <tr>
                 <th scope="col">Id</th>
-                <th scope="col">Nombre</th>
-                <th scope="col">Email</th>
-                <th scope="col">Contraseña</th>
-                <th scope="col">Rol</th>
-                <th scope="col">Acciones</th>
+                <th scope="col">Titulo</th>
+                <th scope="col">Localidad</th>
+                <th scope="col">Descripcion</th>
+                <th scope="col">Foto</th>
+                <th scope="col">Fecha</th>
+                <th scope="col">Hora</th>
+                <th scope="col">Latitud</th>
+                <th scope="col">Longitud</th>
+                <th scope="col">Guia</th>
                 </tr>
             </thead>
             <tbody>
-                <tr v-for="usuario in usuarios" :key="usuario.id">
-                    <td>{{ usuario.id }}</td>
-                    <td>{{ usuario.nombre }}</td>
-                    <td>{{ usuario.email }}</td>
+                <tr v-for="ruta in rutas" :key="usuario.id">
+                    <td>{{ ruta.id }}</td>
+                    <td>{{ ruta.nombre }}</td>
+                    <td>{{ ruta.email }}</td>
                     <td>******</td>
                     <td v-if="usuarioEdicion === usuario.id"><input v-model="usuario.rol" type="text"></td>
                     <td v-else>{{ usuario.rol }}</td>

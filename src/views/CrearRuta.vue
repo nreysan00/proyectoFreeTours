@@ -6,7 +6,6 @@ import {apiURL} from "@/main";
 const emit = defineEmits(["registroUsu"]);
 const form = ref({ titulo: '', localidad: '', descripcion: '', foto: '', fecha: '', hora: '', latitud: '', longitud: '', guia_id: ''});
 const error = ref('');
-const usuarioRegistrado = ref(false);
 
 async function nuevaRuta(){
     const rutaData = {
@@ -33,9 +32,14 @@ fetch(apiURL + 'rutas', {
 .catch(error => console.error('Error:', error));
 }
 
+/*
+async function asignarRuta(id) {
+    
+}
+*/
 </script>
 <template>
-    <div class="container d-flex justify-content-center align-items-center vh-100">
+    <div class="container d-flex justify-content-center align-items-center vh-100"  style="overflow-y: scroll;">
         
         <div class="card shadow p-4" style="width: 100%; max-width: 450px;">
             <div class="card-body">
@@ -121,6 +125,27 @@ fetch(apiURL + 'rutas', {
                             type="text"
                             class="form-control"
                             required
+                        />
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="longitud" class="form-label">Longitud</label>
+                        <input 
+                            id="longitud"
+                            v-model="form.longitud"
+                            type="text"
+                            class="form-control"
+                            required
+                        />
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="guiaId" class="form-label">ID GUIA</label>
+                        <input
+                            id="guiaId"
+                            v-model="form.guia_id"
+                            type="text"
+                            class="form-control"
                         />
                     </div>
 

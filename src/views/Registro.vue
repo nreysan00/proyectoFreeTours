@@ -26,7 +26,9 @@ async function registroUsuario(){
     .then(data => {
         console.log('Respuesta:', data);
         usuarioRegistrado.value = true;
-
+        setTimeout(() => {
+                router.push({ name: "login" });
+            }, 2000);
     })
     .catch(error => console.error('Error:', error));
 }

@@ -11,7 +11,7 @@ const usuarioLogueado = ref(false);
 async function iniciarSesion() {
   const loginData = {
     email: form.value.email,
-    contraseña: form.value.contraseña
+    contraseña: form.value.contraseña,
   };
 
   fetch(apiURL + 'usuarios?login', {
@@ -29,7 +29,7 @@ async function iniciarSesion() {
             error.value = '';
             console.log('Login exitoso:', data.email);
             localStorage.setItem("sesion", JSON.stringify(loginData));
-            emit('sesionIniciada', {email: form.value.email, contraseña: form.value.contraseña})
+            emit('sesionIniciada', {email: form.value.email, contraseña: form.value.contraseña, rol: data.rol})
             
             setTimeout(() => {
                 router.push({ name: "home" });
