@@ -14,7 +14,7 @@ if(route.params.rol == 'cliente'){
 
 const error = ref('');
 const rutas = ref([]);
-const usuarioEdicion = ref(null)
+const guiaAsigEdicion = ref(null)
 
 async function listarRutas() {
 
@@ -22,34 +22,38 @@ async function listarRutas() {
     method: 'GET',
     })
 .then(response => response.json())
-.then(data => console.log('Rutas:', data))
+.then(data => {
+    rutas.value = data;
+    console.log('Rutas:', data)
+})
 .catch(error => console.error('Error:', error));
 }
 listarRutas();
 
-async function editarRol(id, rol) {
-const updatedRole = {
-    rol: rol
+async function editarGuia(id, guia) {
+const asignacionData = {
+    ruta_id: id, // ID de la ruta
+    guia_id: guia  // ID del guía
 };
-fetch(apiURL + 'usuarios?id=' + id, {
-    method: 'PUT',
+
+fetch(apiURL + 'asignaciones', {
+    method: 'POST',
     headers: {
         'Content-Type': 'application/json'
     },
-    body: JSON.stringify(updatedRole)
-    })
-    .then(response => response.json())
-    .then(data => console.log('Respuesta:', data))
-    .catch(error => console.error('Error:', error));
+    body: JSON.stringify(asignacionData)
+})
+.then(response => response.json())
+.then(data => console.log('Respuesta:', data))
+.catch(error => console.error('Error:', error));
 
-    usuarioEdicion.value = null;
 }
 
 function habilitarEdicion(id){
-    usuarioEdicion.value = id
+    guiaAsigEdicion.value = id
 }
 
-async function borrarUsu(id) {
+async function borrarRuta(id) {
     console.log(id)
     fetch(apiURL + 'usuarios?id=' + id, {
     method: 'DELETE',
@@ -78,20 +82,26 @@ async function borrarUsu(id) {
                 <th scope="col">Latitud</th>
                 <th scope="col">Longitud</th>
                 <th scope="col">Guia</th>
+                <th scope="col">Acciones</th>
                 </tr>
             </thead>
             <tbody>
-                <tr v-for="ruta in rutas" :key="usuario.id">
+                <tr v-for="ruta in rutas" :key="ruta.id">
                     <td>{{ ruta.id }}</td>
-                    <td>{{ ruta.nombre }}</td>
-                    <td>{{ ruta.email }}</td>
-                    <td>******</td>
-                    <td v-if="usuarioEdicion === usuario.id"><input v-model="usuario.rol" type="text"></td>
-                    <td v-else>{{ usuario.rol }}</td>
+                    <td>{{ ruta.titulo }}</td>
+                    <td>{{ ruta.localidad }}</td>
+                    <td>{{ ruta.descripcion }}</td>
+                    <td>{{ ruta.foto }}</td>
+                    <td>{{ ruta.fecha }}</td>
+                    <td>{{ ruta.hora }}</td>
+                    <td>{{ ruta.latitud }}</td>
+                    <td>{{ ruta.longitud }}</td>
+                    <td v-if="guiaAsigEdicion === ruta.id"><input v-model="ruta.guia_id" type="text"></td>
+                    <td v-else>{{ ruta.guia_id }}</td>
                     <td>
-                        <button v-if="usuarioEdicion === usuario.id" @click="editarRol(usuario.id, usuario.rol)" class="btn-success">Guardar</button>
-                        <button v-else @click="habilitarEdicion(usuario.id)" class="btn-warning">Edition</button>
-                        <button @click="borrarUsu(usuario.id)" class="btn-danger">Borrar</button>
+                        <button v-if="guiaAsigEdicion === ruta.id" @click="editarGuia(ruta.id, ruta.guia_id)" class="btn-success">Guardar</button>
+                        <button v-else @click="habilitarEdicion(ruta.id)" class="btn-warning">Edition</button>
+                        <button @click="borrarRuta(ruta.id)" class="btn-danger">Borrar</button>
                     </td>
                 </tr>
             </tbody>

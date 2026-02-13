@@ -27,9 +27,14 @@ async function iniciarSesion() {
         if (data.status === 'success') {
             usuarioLogueado.value = true;
             error.value = '';
-            console.log('Login exitoso:', data.email);
-            localStorage.setItem("sesion", JSON.stringify(loginData));
-            emit('sesionIniciada', {email: form.value.email, contraseña: form.value.contraseña, rol: data.rol})
+            console.log('Login exitoso:', data.user.email, 'Rol:', data.user.rol);
+            const datosSesion = {
+              email: data.user.email,
+              nombre: data.user.nombre,
+              rol: data.user.rol
+          };
+            localStorage.setItem("sesion", JSON.stringify(datosSesion));
+            emit('sesionIniciada', datosSesion)
             
             setTimeout(() => {
                 router.push({ name: "home" });
