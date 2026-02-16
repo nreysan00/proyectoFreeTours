@@ -9,10 +9,10 @@ import router from "@/router";
 
 import {ref} from 'vue'
 
-
 //Habría que controlar cuando se inicia sesión y se cierra con un emit desde el hijo y tener un dato
 // de sesión reactivo para pasarlo a la barra de navegación como props
 const datosSesion= ref(JSON.parse(localStorage.getItem('sesion')));
+const emit = defineEmits("usuarioAutenticado", datosSesion);
 
 function actualizaDatosSesion(usuario){
  

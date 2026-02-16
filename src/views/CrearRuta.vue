@@ -118,8 +118,9 @@ fetch(apiURL + 'rutas', {
 })
 .then(response => response.json())
 .then(data => {
-    console.log('Respuesta:', data);
+    console.log('Respuesta:', data)
     router.push({ name: "rutas" });
+
 
 })
 .catch(error => console.error('Error:', error));

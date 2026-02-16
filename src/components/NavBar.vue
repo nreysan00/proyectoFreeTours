@@ -1,11 +1,8 @@
 <script setup>
 
 const props = defineProps({
-    datos: Object,
+    usuarioAutenticado: Object,
 });
-
-
-
 
 </script>
 
@@ -13,13 +10,12 @@ const props = defineProps({
     <nav class="navbar navbar-expand navbar-light bg-light px-3">
         <div class="collapse navbar-collapse" id="navbarSupportedContent">
             
-            <ul class="navbar-nav mr-auto mb-2 mb-lg-0">
-                
+            <ul class="navbar-nav mr-auto">
                 <li class="nav-item">
                     <RouterLink class="nav-link" to="/">Index</RouterLink>
                 </li>
 
-                <template v-if="!datos">
+                <template v-if="!usuarioAutenticado">
                     <li class="nav-item">
                         <RouterLink class="nav-link" to="/register">Registro</RouterLink>
                     </li>
@@ -28,20 +24,20 @@ const props = defineProps({
                     </li>
                 </template>
 
-                <template v-else>
+                <template v-if="usuarioAutenticado">
                     <li class="nav-item">
-                        <RouterLink class="nav-link" :to="`/micuenta/${datos.email}`">Mi Cuenta</RouterLink>
-                    </li>
-
-                    <li v-if="datos.rol === 'admin'" class="nav-item">
-                        <RouterLink class="nav-link text-primary fw-bold" to="/admin">
-                            <i class="bi bi-shield-lock"></i> Admin
+                        <RouterLink class="nav-link" :to="`/micuenta/${usuarioAutenticado.email}`">
+                            Mi Cuenta
                         </RouterLink>
                     </li>
-                    <li v-if="datos.rol === 'admin'" class="nav-item">
-                        <RouterLink class="nav-link text-success fw-bold" to="/nuevaruta">
-                            + Crea Ruta
-                        </RouterLink>
+                    <li v-if="usuarioAutenticado.rol === 'admin'" class="nav-item">
+                        <RouterLink class="nav-link" to="/admin">Admin</RouterLink>
+                    </li>
+                    <li v-if="usuarioAutenticado.rol === 'admin'" class="nav-item">
+                        <RouterLink class="nav-link" to="/nuevaruta">Crea Ruta</RouterLink>
+                    </li>
+                    <li v-if="usuarioAutenticado.rol === 'admin' || usuarioAutenticado.rol === 'guia'" class="nav-item">
+                        <RouterLink class="nav-link" to="/rutas">Rutas</RouterLink>
                     </li>
                 </template>
                 

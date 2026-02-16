@@ -3,15 +3,12 @@ import {ref} from "vue"
 import router from "@/router";
 import {apiURL} from "@/main";
 //import { CModal, CModalHeader, CModalFooter, CModalTitle, CModalBody, CButton, } from "@coreui/vue";
-const route = useRoute();
-console.log(route)
-import { useRoute } from 'vue-router';
-
-if(route.params.rol != 'admin'){
-    alert('¡No puedes estar!')
+//Comprobar que el usuario es admin
+const datosSesion= ref(JSON.parse(localStorage.getItem('sesion')));
+if(datosSesion.value.rol != 'admin'){
+    alert('No puedes entrar aquí');
     router.push({ name: "home" });
 }
-
 const error = ref('');
 const usuarios = ref([]);
 const usuarioEdicion = ref(null)
@@ -53,6 +50,7 @@ function habilitarEdicion(id){
 }
 
 async function borrarUsu(id) {
+    if (!confirm("¿Seguro que quieres borrar a este usuario?")) return;
     console.log(id)
     fetch(apiURL + 'usuarios?id=' + id, {
     method: 'DELETE',

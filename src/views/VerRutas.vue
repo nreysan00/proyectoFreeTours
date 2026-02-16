@@ -3,14 +3,13 @@ import {ref} from "vue"
 import router from "@/router";
 import {apiURL} from "@/main";
 //import { CModal, CModalHeader, CModalFooter, CModalTitle, CModalBody, CButton, } from "@coreui/vue";
-const route = useRoute();
-console.log(route)
-import { useRoute } from 'vue-router';
 
-if(route.params.rol == 'cliente'){
-    alert('¡No puedes estar!')
+const datosSesion= ref(JSON.parse(localStorage.getItem('sesion')));
+if(datosSesion.value.rol === 'cliente'){
+    alert('No puedes entrar aquí');
     router.push({ name: "home" });
 }
+
 
 const error = ref('');
 const rutas = ref([]);
@@ -23,30 +22,33 @@ async function listarRutas() {
     })
 .then(response => response.json())
 .then(data => {
-    rutas.value = data;
+    rutas.value = data
     console.log('Rutas:', data)
 })
 .catch(error => console.error('Error:', error));
 }
 listarRutas();
 
-async function editarGuia(id, guia) {
-const asignacionData = {
-    ruta_id: id, // ID de la ruta
-    guia_id: guia  // ID del guía
-};
+async function asignarRuta(id, guia) {
+    const updatedGuia = {
+        ruta_id: id,
+        guia_id: guia
+    };
 
-fetch(apiURL + 'asignaciones', {
-    method: 'POST',
-    headers: {
-        'Content-Type': 'application/json'
-    },
-    body: JSON.stringify(asignacionData)
-})
-.then(response => response.json())
-.then(data => console.log('Respuesta:', data))
-.catch(error => console.error('Error:', error));
+    fetch(apiURL + 'asignaciones', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(updatedGuia)
+    })
+    .then(response => response.json())
+    .then(data => {
+        console.log('Respuesta:', data);
+    })
+    .catch(error => console.error('Error:', error));
 
+    asignarRuta.value = null;
 }
 
 function habilitarEdicion(id){
@@ -54,15 +56,12 @@ function habilitarEdicion(id){
 }
 
 async function borrarRuta(id) {
-    console.log(id)
-    fetch(apiURL + 'usuarios?id=' + id, {
-    method: 'DELETE',
+    fetch(apiURL + 'rutas?id=' + id, {
+        method: 'DELETE',
     })
     .then(response => response.json())
     .then(data => console.log('Respuesta:', data))
     .catch(error => console.error('Error:', error));
-
-    window.location.reload();
 }
 
 </script>
@@ -97,9 +96,10 @@ async function borrarRuta(id) {
                     <td>{{ ruta.latitud }}</td>
                     <td>{{ ruta.longitud }}</td>
                     <td v-if="guiaAsigEdicion === ruta.id"><input v-model="ruta.guia_id" type="text"></td>
-                    <td v-else>{{ ruta.guia_id }}</td>
+                    <td v-else-if="ruta.guia_id == null">N/A</td>
+                    <td v-else>{{ ruta.guia_nombre }}</td>
                     <td>
-                        <button v-if="guiaAsigEdicion === ruta.id" @click="editarGuia(ruta.id, ruta.guia_id)" class="btn-success">Guardar</button>
+                        <button v-if="guiaAsigEdicion === ruta.id" @click="asignarRuta(ruta.id, ruta.guia_id)" class="btn-success">Guardar</button>
                         <button v-else @click="habilitarEdicion(ruta.id)" class="btn-warning">Edition</button>
                         <button @click="borrarRuta(ruta.id)" class="btn-danger">Borrar</button>
                     </td>
