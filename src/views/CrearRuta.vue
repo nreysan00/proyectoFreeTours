@@ -5,6 +5,13 @@ import {apiURL} from "@/main";
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 
+//Comprobar que el usuario es admin
+const datosSesion= ref(JSON.parse(localStorage.getItem('sesion')));
+if(datosSesion.value.rol != 'admin'){
+    alert('No puedes entrar aquí');
+    router.push({ name: "home" });
+}
+
 const emit = defineEmits(["registroUsu"]);
 const form = ref({ titulo: '', localidad: '', descripcion: '', foto: '', fecha: '', hora: '', latitud: '', longitud: '', guia_id: ''});
 const error = ref('');

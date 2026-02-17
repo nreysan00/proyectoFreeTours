@@ -1,4 +1,5 @@
 import { createRouter, createWebHistory } from 'vue-router'
+import {ref} from 'vue';
 import Home from '../views/Home.vue'
 import Login from '../views/Login.vue'
 import HomeLogueado from '@/views/HomeLogueado.vue'
@@ -6,6 +7,7 @@ import Registro from '@/views/Registro.vue'
 import Admin from '@/views/Admin.vue'
 import CrearRuta from '@/views/CrearRuta.vue'
 import VerRutas from '@/views/VerRutas.vue'
+import DetalleRuta from '@/views/DetalleRuta.vue'
 
 const router = createRouter({
     history: createWebHistory(import.meta.env.BASE_URL),
@@ -47,8 +49,23 @@ const router = createRouter({
             path: '/rutas',
             name: 'rutas',
             component: VerRutas
+        },
+        {
+            path: '/ruta/:id',
+            name: 'detalleRuta',
+            component: DetalleRuta
         }
     ],
 })
 
+/*
+router.beforeEach(async (to, from) => {
+    if(
+        !usuarioAuntenticado && 
+        to.name !== 'login'
+    ) {
+        return {name: 'login'}
+    }
+})
+*/
 export default router

@@ -2,14 +2,13 @@
 import {ref} from "vue"
 import router from "@/router";
 import {apiURL} from "@/main";
-//import { CModal, CModalHeader, CModalFooter, CModalTitle, CModalBody, CButton, } from "@coreui/vue";
 
+//Comprobar que el usuario es admin
 const datosSesion= ref(JSON.parse(localStorage.getItem('sesion')));
-if(datosSesion.value.rol === 'cliente'){
+if(datosSesion.value.rol !== 'admin'){
     alert('No puedes entrar aquí');
     router.push({ name: "home" });
 }
-
 
 const error = ref('');
 const rutas = ref([]);

@@ -24,6 +24,7 @@ function actualizaDatosSesion(usuario){
 
   else
     localStorage.removeItem("sesion");
+    router.push({ name: "home" });
 
 }
 
@@ -36,7 +37,7 @@ function actualizaDatosSesion(usuario){
   <div class="layout">
 
     <Header :usuarioAutenticado="datosSesion" @sesionCerrada="actualizaDatosSesion" title="FreeTours" />
-    <NavBar :datos="datosSesion"/>
+    <NavBar :usuarioAutenticado="datosSesion"/>
     <main class="main-content">
       <RouterView @sesionIniciada="actualizaDatosSesion" ></RouterView>
     </main>
