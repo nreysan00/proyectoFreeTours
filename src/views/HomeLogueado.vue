@@ -12,6 +12,8 @@
         const datosSesion = JSON.parse(localStorage.getItem('sesion'));
         nombreUsuario.value = datosSesion.nombre;
     }
+    const datosSesion = JSON.parse(localStorage.getItem('sesion'));
+    const rol = datosSesion.rol;
 
     async function verReservas() {
         fetch(apiURL + 'reservas', {
@@ -21,10 +23,10 @@
         .then(data => console.log('Reservas:', data))
         .catch(error => console.error('Error:', error));
     }
+    console.log(verReservas())
     
-    async function reservasUsuario(nombreUsuario) {
-        const userEmail = nombreUsuario; // Email del usuario
-        fetch(apiURL + `reservas?email=${userEmail}`, {
+    async function reservasUsuario(email) {
+        fetch(apiURL + `reservas?email=${email}`, {
             method: 'GET',
         })
         .then(response => response.json())
@@ -35,6 +37,19 @@
         .catch(error => console.error('Error:', error));
     }
     reservasUsuario(nombreUsuario.value);
+
+    async function cancelarReserva(id) {
+        if (!confirm("¿Seguro que quieres cancelar esta reserva?")) return;
+        fetch(apiURL + `reservas?id=${id}`, {
+            method: 'DELETE',
+        })
+        .then(response => response.json())
+        .then(data => {
+            console.log('Reserva cancelada:', data);
+            reservasUsuario(nombreUsuario.value);
+        })
+        .catch(error => console.error('Error:', error));
+    }
 </script>
 
 <template>
@@ -42,13 +57,33 @@
     <div class="row">
         <div class="col-lg-4 pb-5">
             <!-- Account Sidebar-->
-            <div class="author-card pb-3">
-                <div class="author-card-cover" style="background-image: url(https://bootdey.com/img/Content/flores-amarillas-wallpaper.jpeg);"><a class="btn btn-style-1 btn-white btn-sm" href="#" data-toggle="tooltip" title="" data-original-title="You currently have 290 Reward points to spend"><i class="fa fa-award text-md"></i>&nbsp;290 points</a></div>
+            <div v-if="rol === 'admin'" class="author-card pb-3">
+                <div class="author-card-cover" style="background-image: url(https://t4.ftcdn.net/jpg/02/55/77/03/360_F_255770374_rbmJO9gkkIhMBcyVPc3iW016BCLDvcWc.jpg);"></div>
                 <div class="author-card-profile">
-                    <div class="author-card-avatar"><img src="https://bootdey.com/img/Content/avatar/avatar1.png" alt="Daniel Adams">
+                    <div class="author-card-avatar"><img src="https://p7.hiclipart.com/preview/9/763/803/computer-icons-login-user-system-administrator-image-admin-thumbnail.jpg" alt="Daniel Adams">
                     </div>
                     <div class="author-card-details">
-                        <h5 class="author-card-name text-lg">Daniel Adams</h5><span class="author-card-position">Joined February 06, 2017</span>
+                        <h5 class="author-card-name text-lg">{{ nombreUsuario }}</h5><span class="author-card-position">Bienvenido, {{ rol.toUpperCase() }}</span>
+                    </div>
+                </div>
+            </div>
+            <div v-else-if="rol === 'guia'" class="author-card pb-3">
+                <div class="author-card-cover" style="background-image: url(https://www.freetour.com/images/tours/1341/free-tour-madrid-basico-23.jpg);"></div>
+                <div class="author-card-profile">
+                    <div class="author-card-avatar"><img src="https://e7.pngegg.com/pngimages/790/2/png-clipart-tourism-travel-vacation-tour-guide-backpacker-hostel-travel-text-logo-thumbnail.png" alt="Daniel Adams">
+                    </div>
+                    <div class="author-card-details">
+                        <h5 class="author-card-name text-lg">{{ nombreUsuario }}</h5><span class="author-card-position">Bienvenido, {{ rol.toUpperCase() }}</span>
+                    </div>
+                </div>
+            </div>
+            <div v-else class="author-card pb-3">
+                <div class="author-card-cover" style="background-image: url(https://bootdey.com/img/Content/flores-amarillas-wallpaper.jpeg);"></div>
+                <div class="author-card-profile">
+                    <div class="author-card-avatar"><img src="https://www.freeiconspng.com/uploads/customers-icon-3.png" alt="Daniel Adams">
+                    </div>
+                    <div class="author-card-details">
+                        <h5 class="author-card-name text-lg">{{ nombreUsuario }}</h5><span class="author-card-position">{{ rol.toUpperCase() }}</span>
                     </div>
                 </div>
             </div>
@@ -57,7 +92,7 @@
                     <a class="list-group-item active" href="#">
                         <div class="d-flex justify-content-between align-items-center">
                             <div><i class="fa fa-shopping-bag mr-1 text-muted"></i>
-                                <div class="d-inline-block font-weight-medium text-uppercase">Orders List</div>
+                                <div class="d-inline-block font-weight-medium text-uppercase">Mis Reservas</div>
                             </div><span class="badge badge-secondary">6</span>
                         </div>
                     </a><a class="list-group-item" href="https://www.bootdey.com/snippets/view/bs4-profile-settings-page" target="__blank"><i class="fa fa-user text-muted"></i>Profile Settings</a><a class="list-group-item" href="#"><i class="fa fa-map-marker text-muted"></i>Addresses</a>
@@ -99,22 +134,20 @@
                 <th scope="col">Ruta</th>
                 <th scope="col">Localidad</th>
                 <th scope="col">Fecha</th>
+                <th scope="col">Hora</th>
                 <th scope="col">Ubicación</th>
                 <th scope="col">Acciones</th>
                 </tr>
             </thead>
             <tbody>
                 <tr v-for="reserva in reservas" :key="reserva.id">
-                    <td>{{ reserva.id }}</td>
-                    <td>{{ reserva.nombre }}</td>
-                    <td>{{ reserva.email }}</td>
-                    <td>******</td>
-                    <td v-if="usuarioEdicion === usuario.id"><input v-model="usuario.rol" type="text"></td>
-                    <td v-else>{{ usuario.rol }}</td>
+                    <td>{{ reserva.ruta_titulo }}</td>
+                    <td>{{ reserva.ruta_localidad }}</td>
+                    <td>{{ reserva.ruta_fecha }}</td>
+                    <td>{{ reserva.ruta_hora }}</td>
+                    <td>{{ reserva.ruta_latitud }} - {{ reserva.ruta_longitud }}</td>
                     <td>
-                        <button v-if="usuarioEdicion === usuario.id" @click="editarRol(usuario.id, usuario.rol)" class="btn-success">Guardar</button>
-                        <button v-else @click="habilitarEdicion(usuario.id)" class="btn-warning">Edition</button>
-                        <button @click="borrarUsu(usuario.id)" class="btn-danger">Borrar</button>
+                        <button @click="cancelarReserva(reserva.reserva_id)" class="btn-danger">Cancelar Reserva</button>
                     </td>
                 </tr>
             </tbody>

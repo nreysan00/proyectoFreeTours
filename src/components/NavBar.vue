@@ -12,7 +12,7 @@ const props = defineProps({
             
             <ul class="navbar-nav mr-auto">
                 <li class="nav-item">
-                    <RouterLink class="nav-link" to="/">Index</RouterLink>
+                    <RouterLink class="nav-link" to="/">Inicio</RouterLink>
                 </li>
 
                 <template v-if="!usuarioAutenticado">

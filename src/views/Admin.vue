@@ -88,7 +88,7 @@ async function borrarUsu(id) {
                     <td v-else>{{ usuario.rol }}</td>
                     <td>
                         <button v-if="usuarioEdicion === usuario.id" @click="editarRol(usuario.id, usuario.rol)" class="btn-success">Guardar</button>
-                        <button v-else @click="habilitarEdicion(usuario.id)" class="btn-warning">Edition</button>
+                        <button v-else @click="habilitarEdicion(usuario.id)" class="btn-warning">Editar Rol</button>
                         <button @click="borrarUsu(usuario.id)" class="btn-danger">Borrar</button>
                     </td>
                 </tr>

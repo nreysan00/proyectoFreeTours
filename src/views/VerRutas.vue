@@ -50,6 +50,7 @@ async function asignarRuta(id, guia) {
     asignarRuta.value = null;
 }
 
+
 function habilitarEdicion(id){
     guiaAsigEdicion.value = id
 }
