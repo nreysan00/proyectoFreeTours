@@ -25,6 +25,11 @@ function actualizaDatosSesion(usuario){
   else
     localStorage.removeItem("sesion");
     router.push({ name: "home" });
+    if(router.currentRoute.value.name !== 'home'){
+      router.push({name:'home'})
+    }else{
+      window.location.reload();
+    }
 
 }
 

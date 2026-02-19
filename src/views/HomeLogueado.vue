@@ -1,55 +1,10 @@
 <script setup>
     import { useRoute } from 'vue-router';
     import {ref} from 'vue'
-    import { apiURL } from '@/main';
-
     const route = useRoute()
     const nombreUsuario = ref(route.params.email)
-    const reservas = ref([]);
 
-    const sesionIniciada = ref(localStorage.getItem('sesion') !== null);
-    if(sesionIniciada.value.rol){
-        const datosSesion = JSON.parse(localStorage.getItem('sesion'));
-        nombreUsuario.value = datosSesion.nombre;
-    }
-    const datosSesion = JSON.parse(localStorage.getItem('sesion'));
-    const rol = datosSesion.rol;
-
-    async function verReservas() {
-        fetch(apiURL + 'reservas', {
-            method: 'GET',
-        })
-        .then(response => response.json())
-        .then(data => console.log('Reservas:', data))
-        .catch(error => console.error('Error:', error));
-    }
-    console.log(verReservas())
     
-    async function reservasUsuario(email) {
-        fetch(apiURL + `reservas?email=${email}`, {
-            method: 'GET',
-        })
-        .then(response => response.json())
-        .then(data => {
-            reservas.value = data;
-            console.log('Reservas del usuario:', data)
-        })
-        .catch(error => console.error('Error:', error));
-    }
-    reservasUsuario(nombreUsuario.value);
-
-    async function cancelarReserva(id) {
-        if (!confirm("¿Seguro que quieres cancelar esta reserva?")) return;
-        fetch(apiURL + `reservas?id=${id}`, {
-            method: 'DELETE',
-        })
-        .then(response => response.json())
-        .then(data => {
-            console.log('Reserva cancelada:', data);
-            reservasUsuario(nombreUsuario.value);
-        })
-        .catch(error => console.error('Error:', error));
-    }
 </script>
 
 <template>
@@ -57,33 +12,13 @@
     <div class="row">
         <div class="col-lg-4 pb-5">
             <!-- Account Sidebar-->
-            <div v-if="rol === 'admin'" class="author-card pb-3">
-                <div class="author-card-cover" style="background-image: url(https://t4.ftcdn.net/jpg/02/55/77/03/360_F_255770374_rbmJO9gkkIhMBcyVPc3iW016BCLDvcWc.jpg);"></div>
+            <div class="author-card pb-3">
+                <div class="author-card-cover" style="background-image: url(https://bootdey.com/img/Content/flores-amarillas-wallpaper.jpeg);"><a class="btn btn-style-1 btn-white btn-sm" href="#" data-toggle="tooltip" title="" data-original-title="You currently have 290 Reward points to spend"><i class="fa fa-award text-md"></i>&nbsp;290 points</a></div>
                 <div class="author-card-profile">
-                    <div class="author-card-avatar"><img src="https://p7.hiclipart.com/preview/9/763/803/computer-icons-login-user-system-administrator-image-admin-thumbnail.jpg" alt="Daniel Adams">
+                    <div class="author-card-avatar"><img src="https://bootdey.com/img/Content/avatar/avatar1.png" alt="Daniel Adams">
                     </div>
                     <div class="author-card-details">
-                        <h5 class="author-card-name text-lg">{{ nombreUsuario }}</h5><span class="author-card-position">Bienvenido, {{ rol.toUpperCase() }}</span>
-                    </div>
-                </div>
-            </div>
-            <div v-else-if="rol === 'guia'" class="author-card pb-3">
-                <div class="author-card-cover" style="background-image: url(https://www.freetour.com/images/tours/1341/free-tour-madrid-basico-23.jpg);"></div>
-                <div class="author-card-profile">
-                    <div class="author-card-avatar"><img src="https://e7.pngegg.com/pngimages/790/2/png-clipart-tourism-travel-vacation-tour-guide-backpacker-hostel-travel-text-logo-thumbnail.png" alt="Daniel Adams">
-                    </div>
-                    <div class="author-card-details">
-                        <h5 class="author-card-name text-lg">{{ nombreUsuario }}</h5><span class="author-card-position">Bienvenido, {{ rol.toUpperCase() }}</span>
-                    </div>
-                </div>
-            </div>
-            <div v-else class="author-card pb-3">
-                <div class="author-card-cover" style="background-image: url(https://bootdey.com/img/Content/flores-amarillas-wallpaper.jpeg);"></div>
-                <div class="author-card-profile">
-                    <div class="author-card-avatar"><img src="https://www.freeiconspng.com/uploads/customers-icon-3.png" alt="Daniel Adams">
-                    </div>
-                    <div class="author-card-details">
-                        <h5 class="author-card-name text-lg">{{ nombreUsuario }}</h5><span class="author-card-position">{{ rol.toUpperCase() }}</span>
+                        <h5 class="author-card-name text-lg">Daniel Adams</h5><span class="author-card-position">Joined February 06, 2017</span>
                     </div>
                 </div>
             </div>
@@ -92,7 +27,7 @@
                     <a class="list-group-item active" href="#">
                         <div class="d-flex justify-content-between align-items-center">
                             <div><i class="fa fa-shopping-bag mr-1 text-muted"></i>
-                                <div class="d-inline-block font-weight-medium text-uppercase">Mis Reservas</div>
+                                <div class="d-inline-block font-weight-medium text-uppercase">Orders List</div>
                             </div><span class="badge badge-secondary">6</span>
                         </div>
                     </a><a class="list-group-item" href="https://www.bootdey.com/snippets/view/bs4-profile-settings-page" target="__blank"><i class="fa fa-user text-muted"></i>Profile Settings</a><a class="list-group-item" href="#"><i class="fa fa-map-marker text-muted"></i>Addresses</a>
@@ -128,29 +63,54 @@
                 </div>
             </div>
             <div class="table-responsive">
-                <caption>Mis Reservas</caption>
-                <thead>
-                <tr>
-                <th scope="col">Ruta</th>
-                <th scope="col">Localidad</th>
-                <th scope="col">Fecha</th>
-                <th scope="col">Hora</th>
-                <th scope="col">Ubicación</th>
-                <th scope="col">Acciones</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr v-for="reserva in reservas" :key="reserva.id">
-                    <td>{{ reserva.ruta_titulo }}</td>
-                    <td>{{ reserva.ruta_localidad }}</td>
-                    <td>{{ reserva.ruta_fecha }}</td>
-                    <td>{{ reserva.ruta_hora }}</td>
-                    <td>{{ reserva.ruta_latitud }} - {{ reserva.ruta_longitud }}</td>
-                    <td>
-                        <button @click="cancelarReserva(reserva.reserva_id)" class="btn-danger">Cancelar Reserva</button>
-                    </td>
-                </tr>
-            </tbody>
+                <table class="table table-hover mb-0">
+                    <thead>
+                        <tr>
+                            <th>Order #</th>
+                            <th>Date Purchased</th>
+                            <th>Status</th>
+                            <th>Total</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><a class="navi-link" href="#order-details" data-toggle="modal">78A643CD409</a></td>
+                            <td>August 08, 2017</td>
+                            <td><span class="badge badge-danger m-0">Canceled</span></td>
+                            <td><span>$760.50</span></td>
+                        </tr>
+                        <tr>
+                            <td><a class="navi-link" href="#order-details" data-toggle="modal">34VB5540K83</a></td>
+                            <td>July 21, 2017</td>
+                            <td><span class="badge badge-info m-0">In Progress</span></td>
+                            <td>$315.20</td>
+                        </tr>
+                        <tr>
+                            <td><a class="navi-link" href="#order-details" data-toggle="modal">112P45A90V2</a></td>
+                            <td>June 15, 2017</td>
+                            <td><span class="badge badge-warning m-0">Delayed</span></td>
+                            <td>$1,264.00</td>
+                        </tr>
+                        <tr>
+                            <td><a class="navi-link" href="#order-details" data-toggle="modal">28BA67U0981</a></td>
+                            <td>May 19, 2017</td>
+                            <td><span class="badge badge-success m-0">Delivered</span></td>
+                            <td>$198.35</td>
+                        </tr>
+                        <tr>
+                            <td><a class="navi-link" href="#order-details" data-toggle="modal">502TR872W2</a></td>
+                            <td>April 04, 2017</td>
+                            <td><span class="badge badge-success m-0">Delivered</span></td>
+                            <td>$2,133.90</td>
+                        </tr>
+                        <tr>
+                            <td><a class="navi-link" href="#order-details" data-toggle="modal">47H76G09F33</a></td>
+                            <td>March 30, 2017</td>
+                            <td><span class="badge badge-success m-0">Delivered</span></td>
+                            <td>$86.40</td>
+                        </tr>
+                    </tbody>
+                </table>
             </div>
         </div>
     </div>
