@@ -16,7 +16,6 @@ function cerrarSesion() {
   
   
   emit("sesionCerrada");
-  router.push({name:"home"});
 
 
 

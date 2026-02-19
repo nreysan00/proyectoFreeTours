@@ -4,6 +4,7 @@ import router from "@/router";
 import {apiURL} from "@/main";
 //Esta página incluirá una barra de búsqueda
 
+const sesionIniciada = ref(localStorage.getItem('sesion') !== null);
 const fecha = ref('');
 const localidad = ref('');
 const listaRutas = ref([]);
@@ -21,17 +22,17 @@ async function buscarRuta(fecha, localidad) {
 
         })
         .catch(error => console.error('Error:', error));
-    }else{
-        fetch(apiURL + `rutas?fecha=${fecha}&localidad=${localidad}`, {
-            method: 'GET',
-        })
-        .then(response => response.json())
-        .then(data => {
-            listaRutas.value = data;
-            console.log('Rutas filtradas:', data)
-        })
-        .catch(error => console.error('Error:', error));
-    } 
+    }
+
+    fetch(apiURL + `rutas?fecha=${fecha}&localidad=${localidad}`, {
+        method: 'GET',
+    })
+    .then(response => response.json())
+    .then(data => {
+        listaRutas.value = data;
+        console.log('Rutas filtradas:', data)
+    })
+    .catch(error => console.error('Error:', error)); 
 }
 
 function formatearFecha(fechaSql) {
@@ -45,7 +46,6 @@ function formatearFecha(fechaSql) {
 }
 </script>
 <template>
-    <h1>BIENVENIDO A FREETOURS</h1>
     <form @submit.prevent="buscarRuta(fecha, localidad)" class="d-flex" role="search">
         <input v-model="fecha" class="form-control me-6" type="date" placeholder="Fecha" aria-label="Search">
         <input v-model="localidad" class="form-control me-6" type="text" placeholder="Localidad" aria-label="Search">
@@ -63,7 +63,7 @@ function formatearFecha(fechaSql) {
                 <div class="card h-100 shadow-sm border-0">
                     
                     <img 
-                        :src="ruta.foto ? ruta.foto : 'https://via.placeholder.com/400x250?text=Sin+Imagen'" 
+                        :src="ruta.foto ? ruta.foto : 'https://www.elmesondespeñaperros.es/wp-content/uploads/catedral-ja-e1423836657491.jpg'" 
                         class="card-img-top" 
                         alt="Imagen de la ruta"
                         style="height: 200px; object-fit: cover;" 
@@ -89,10 +89,12 @@ function formatearFecha(fechaSql) {
                                 <i class="bi bi-clock me-1"></i> {{ ruta.hora }}
                             </span>
                         </div>
-                        
-                        <button @click="router.push({name:'detalleRuta', params: {id: ruta.id}})" class="btn btn-outline-primary w-100 mt-3">
+                        <RouterLink 
+                            :to="{ name: 'detalleRuta', params: { id: ruta.id } }" 
+                            class="btn btn-outline-primary w-100 mt-3"
+                        >
                             Ver Detalles
-                        </button>
+                        </RouterLink>
                     </div>
 
                 </div>

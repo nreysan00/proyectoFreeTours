@@ -26,6 +26,11 @@ function actualizaDatosSesion(usuario){
     //Cuando el usuario cierra sesión, se borra la sesión del localStorage y se redirige a home
     localStorage.removeItem("sesion");
     router.push({ name: "home" });
+    if(router.currentRoute.value.name !== 'home'){
+      router.push({name:'home'})
+    }else{
+      window.location.reload();
+    }
 
 }
 
