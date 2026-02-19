@@ -3,9 +3,6 @@ import {ref} from "vue"
 import router from "@/router";
 import {apiURL} from "@/main";
 //Esta página incluirá una barra de búsqueda
-//La barra de búsqueda hará un fetch y el resultado se guardará en el localstorage
-//Los datos del localstorage de la búsqueda se pasarán a la vista de búsqueda
-//Se debe eliminar la búsqueda para que no se quede almacenada
 
 const fecha = ref('');
 const localidad = ref('');

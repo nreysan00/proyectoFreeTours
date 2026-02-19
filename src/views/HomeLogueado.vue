@@ -57,6 +57,7 @@
     <div class="row">
         <div class="col-lg-4 pb-5">
             <!-- Account Sidebar-->
+             <!-- Sale un sidebar según el rol-->
             <div v-if="rol === 'admin'" class="author-card pb-3">
                 <div class="author-card-cover" style="background-image: url(https://t4.ftcdn.net/jpg/02/55/77/03/360_F_255770374_rbmJO9gkkIhMBcyVPc3iW016BCLDvcWc.jpg);"></div>
                 <div class="author-card-profile">
