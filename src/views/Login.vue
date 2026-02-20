@@ -29,6 +29,7 @@ async function iniciarSesion() {
             error.value = '';
             console.log('Login exitoso:', data.user.email, 'Rol:', data.user.rol);
             const datosSesion = {
+              id: data.user.id,
               email: data.user.email,
               nombre: data.user.nombre,
               rol: data.user.rol

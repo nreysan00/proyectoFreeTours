@@ -9,6 +9,13 @@
     const reservas = ref([]);
     const asignaciones = ref([]);
 
+    //Variables para pasar lista
+    const mostrarModalLista = ref(false);
+    const rutaActiva = ref(null);
+    const asistentesEsperados = ref(0);
+    const asistentesReales = ref(0);
+    const guardando = ref(false);
+
     const sesionIniciada = ref(localStorage.getItem('sesion') !== null);
     if(sesionIniciada.value.rol){
         const datosSesion = JSON.parse(localStorage.getItem('sesion'));
@@ -16,6 +23,7 @@
     }
     const datosSesion = JSON.parse(localStorage.getItem('sesion'));
     const rol = datosSesion.rol;
+    const idGuia = datosSesion.id;
 
     async function verReservas() {
         fetch(apiURL + 'reservas', {
@@ -39,20 +47,6 @@
         .catch(error => console.error('Error:', error));
     }
 
-    async function asignacionesGuia(id) {
-        fetch(apiURL + `asignaciones?guia_id=${id}`, {
-            method: 'GET',
-        })
-        .then(response => response.json())
-        .then(data => {
-            reservas.value = data;
-            console.log('Asignaciones del guía:', data)
-        })
-        .catch(error => console.error('Error:', error));
-    }    
-
-    rol === 'guia' ? asignacionesGuia(datosSesion.id) : reservasUsuario(nombreUsuario.value);
-
     async function cancelarReserva(id) {
         if (!confirm("¿Seguro que quieres cancelar esta reserva?")) return;
         fetch(apiURL + `reservas?id=${id}`, {
@@ -65,6 +59,75 @@
         })
         .catch(error => console.error('Error:', error));
     }
+
+    async function asignacionesGuia(idGuia) {
+        fetch(apiURL + `asignaciones?guia_id=${idGuia}`, {
+            method: 'GET',
+        })
+        .then(response => response.json())
+        .then(data => {
+            asignaciones.value = data;
+            console.log('Asignaciones del guía:', data)
+        })
+        .catch(error => console.error('Error:', error));
+    }
+
+    rol == 'guia' ? asignacionesGuia(idGuia) : reservasUsuario(nombreUsuario.value);
+
+    //Funciones para pasar lsita
+    function abrirModalLista(ruta) {
+    rutaActiva.value = ruta;
+    
+    // Obtenemos cuántos deberían venir según la base de datos
+    asistentesEsperados.value = ruta.asistentes || 0;
+    
+    // Por comodidad para el guía, pre-rellenamos el input asumiendo que han venido todos.
+    // Si falta alguien, solo tiene que darle al botón de restar.
+    asistentesReales.value = ruta.asistentes || 0; 
+    
+    mostrarModalLista.value = true;
+}
+
+function cerrarModalLista() {
+    mostrarModalLista.value = false;
+    rutaActiva.value = null;
+}
+
+function sumarAsistente() {
+    asistentesReales.value++;
+}
+
+function restarAsistente() {
+    if (asistentesReales.value > 0) {
+        asistentesReales.value--;
+    }
+}
+
+async function guardarAsistencia() {
+    guardando.value = true;
+    
+    console.log(`Guardando en BD: La ruta ${rutaActiva.value.id} tuvo ${asistentesReales.value} asistentes reales.`);
+
+    // Aquí harías el POST a tu API (PHP) para actualizar el número final
+    /*
+    fetch(apiURL + 'guardar_asistencia', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+            ruta_id: rutaActiva.value.id,
+            asistentes_reales: asistentesReales.value
+        })
+    }).then(...)
+    */
+
+    // Simulamos que tarda 1 segundo en guardar
+    setTimeout(() => {
+        alert("¡Asistencia guardada! Que vaya genial el tour.");
+        guardando.value = false;
+        cerrarModalLista();
+    }, 1000);
+}
+
 </script>
 
 <template>
@@ -190,6 +253,7 @@
                 <th scope="col">Fecha</th>
                 <th scope="col">Hora</th>
                 <th scope="col">Ubicación</th>
+                <th scope="col">Num Reservas</th>
                 <th scope="col">Acciones</th>
                 </tr>
             </thead>
@@ -200,14 +264,75 @@
                     <td>{{ asignacion.ruta_fecha }}</td>
                     <td>{{ asignacion.ruta_hora }}</td>
                     <td>{{ asignacion.ruta_latitud }} - {{ asignacion.ruta_longitud }}</td>
+                    <td>{{ asignacion.reservas[0].num_personas }}</td>
                     <td>
-                        <button @click="cancelarAsignacion(asignacion.asignacion_id)" class="btn-danger">Cancelar Asignación</button>
+                        boton
+                        <button @click="abrirModalLista(asignacion)" class="btn btn-success">Pasar Lista</button>
                     </td>
+                    
                 </tr>
             </tbody>
             </div>
         </div>
     </div>
+    <div v-if="mostrarModalLista" class="modal-backdrop fade show" style="opacity: 0.5;"></div>
+
+<div v-if="mostrarModalLista" class="modal fade show d-block" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content shadow-lg border-0">
+            
+            <div class="modal-header bg-light">
+                <div>
+                    <h5 class="modal-title fw-bold text-primary mb-0">Pasar Lista</h5>
+                    <small class="text-muted">{{ rutaActiva.titulo }} - {{ rutaActiva.fecha }}</small>
+                </div>
+                <button type="button" class="btn-close" @click="cerrarModalLista" aria-label="Cerrar"></button>
+            </div>
+            
+            <div class="modal-body text-center p-4">
+                
+                <h6 class="text-muted mb-4">
+                    Personas esperadas: <span class="badge bg-secondary fs-6 ms-2">{{ asistentesEsperados }}</span>
+                </h6>
+
+                <h4 class="fw-bold text-dark mb-4">¿Cuántas personas han venido finalmente?</h4>
+
+                <div class="d-flex justify-content-center align-items-center gap-3 my-3">
+                    
+                    <button class="btn btn-outline-danger rounded-circle shadow-sm d-flex justify-content-center align-items-center" 
+                            style="width: 60px; height: 60px;" 
+                            @click="restarAsistente">
+                        <i class="bi bi-dash fs-2"></i>
+                    </button>
+
+                    <input 
+                        type="number" 
+                        class="form-control text-center border bg-light text-primary fw-bold shadow-sm" 
+                        style="width: 120px; height: 80px; font-size: 3rem; border-radius: 15px;" 
+                        v-model.number="asistentesReales" 
+                        min="0"
+                    >
+
+                    <button class="btn btn-outline-success rounded-circle shadow-sm d-flex justify-content-center align-items-center" 
+                            style="width: 60px; height: 60px;" 
+                            @click="sumarAsistente">
+                        <i class="bi bi-plus fs-2"></i>
+                    </button>
+
+                </div>
+            </div>
+            
+            <div class="modal-footer bg-light border-0 justify-content-center pb-4">
+                <button type="button" class="btn btn-primary btn-lg px-5 shadow-sm rounded-pill" @click="guardarAsistencia" :disabled="guardando">
+                    <span v-if="guardando" class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+                    <i v-else class="bi bi-check-circle me-2"></i> 
+                    Confirmar Asistentes
+                </button>
+            </div>
+
+        </div>
+    </div>
+</div>
 </div>
 </template>
 
