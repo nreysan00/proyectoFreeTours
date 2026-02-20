@@ -70,7 +70,11 @@ function confirmarReserva(numPlazas) {
 
 <template>
     <div class="container py-5">
-        
+        <div class="text-end mt-5">
+                <button class="btn btn-secondary" @click="router.push({ name: 'home' }) ">
+                    <i class="bi bi-arrow-left-circle"></i> Volver al inicio
+                </button>
+            </div>
         <div v-if="cargando" class="text-center py-5">
             <div class="spinner-border text-primary" role="status"></div>
             <p class="mt-3 text-muted">Cargando detalles de la ruta...</p>

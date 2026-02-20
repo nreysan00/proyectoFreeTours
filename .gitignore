@@ -39,5 +39,5 @@ __screenshots__/
 *.timestamp-*-*.mjs
 
 # Public
-public/tours.mp4
-public/tours.webm
+public/*.mp4
+public/*.webm

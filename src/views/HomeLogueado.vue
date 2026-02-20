@@ -41,11 +41,12 @@
         })
         .then(response => response.json())
         .then(data => {
-            asignaciones.value = data;
+            reservas.value = data;
             console.log('Reservas del usuario:', data)
         })
         .catch(error => console.error('Error:', error));
     }
+
 
     async function cancelarReserva(id) {
         if (!confirm("¿Seguro que quieres cancelar esta reserva?")) return;
@@ -72,7 +73,7 @@
         .catch(error => console.error('Error:', error));
     }
 
-    rol == 'guia' ? asignacionesGuia(idGuia) : reservasUsuario(nombreUsuario.value);
+    rol == 'guia' ?  asignacionesGuia(idGuia) : reservasUsuario(nombreUsuario.value);
 
     //Funciones para pasar lsita
     function abrirModalLista(ruta) {
@@ -170,7 +171,9 @@ async function guardarAsistencia() {
                     <a class="list-group-item active" href="#">
                         <div class="d-flex justify-content-between align-items-center">
                             <div><i class="fa fa-shopping-bag mr-1 text-muted"></i>
-                                <div class="d-inline-block font-weight-medium text-uppercase">Mis Reservas</div>
+                                <div v-if="rol == 'cliente'" class="d-inline-block font-weight-medium text-uppercase">Mis Reservas</div>
+                                <div v-else-if="rol == 'guia'" class="d-inline-block font-weight-medium text-uppercase">Mis Asignaciones</div>
+                                <div v-else class="d-inline-block font-weight-medium text-uppercase">Mis Funciones</div>
                             </div><span class="badge badge-secondary">6</span>
                         </div>
                     </a><a class="list-group-item" href="https://www.bootdey.com/snippets/view/bs4-profile-settings-page" target="__blank"><i class="fa fa-user text-muted"></i>Profile Settings</a><a class="list-group-item" href="#"><i class="fa fa-map-marker text-muted"></i>Addresses</a>
@@ -193,18 +196,6 @@ async function guardarAsistencia() {
         </div>
         <!-- Orders Table-->
         <div v-if="rol == 'cliente'" class="col-lg-8 pb-5">
-            <div class="d-flex justify-content-end pb-3">
-                <div class="form-inline">
-                    <label class="text-muted mr-3" for="order-sort">Sort Orders</label>
-                    <select class="form-control" id="order-sort">
-                        <option>All</option>
-                        <option>Delivered</option>
-                        <option>In Progress</option>
-                        <option>Delayed</option>
-                        <option>Canceled</option>
-                    </select>
-                </div>
-            </div>
             <div class="table-responsive">
                 <caption>Mis Reservas</caption>
                 <thead>
@@ -232,18 +223,6 @@ async function guardarAsistencia() {
             </div>
         </div>
         <div v-else-if="rol == 'guia'" class="col-lg-8 pb-5">
-            <div class="d-flex justify-content-end pb-3">
-                <div class="form-inline">
-                    <label class="text-muted mr-3" for="order-sort">Sort Orders</label>
-                    <select class="form-control" id="order-sort">
-                        <option>All</option>
-                        <option>Delivered</option>
-                        <option>In Progress</option>
-                        <option>Delayed</option>
-                        <option>Canceled</option>
-                    </select>
-                </div>
-            </div>
             <div class="table-responsive">
                 <caption>Mis Rutas</caption>
                 <thead>
@@ -265,11 +244,17 @@ async function guardarAsistencia() {
                     <td>{{ asignacion.ruta_hora }}</td>
                     <td>{{ asignacion.ruta_latitud }} - {{ asignacion.ruta_longitud }}</td>
                     <td>{{ asignacion.reservas[0].num_personas }}</td>
-                    <td>
-                        boton
+                    <td v-if="asignacion.reservas[0].num_personas < 10">
+                        <i class="bi bi-exclamation-triangle text-warning"></i>
                         <button @click="abrirModalLista(asignacion)" class="btn btn-success">Pasar Lista</button>
                     </td>
-                    
+                    <td v-else-if="asignacion.reservas[0].num_personas == 10">
+                        <span class="text-danger">Máximo de reservas alcanzado</span>
+                        <button @click="abrirModalLista(asignacion)" class="btn btn-success">Pasar Lista</button>
+                    </td>
+                    <td v-else>
+                        <button @click="abrirModalLista(asignacion)" class="btn btn-success">Pasar Lista</button>
+                    </td>
                 </tr>
             </tbody>
             </div>
@@ -277,62 +262,62 @@ async function guardarAsistencia() {
     </div>
     <div v-if="mostrarModalLista" class="modal-backdrop fade show" style="opacity: 0.5;"></div>
 
-<div v-if="mostrarModalLista" class="modal fade show d-block" tabindex="-1">
-    <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content shadow-lg border-0">
-            
-            <div class="modal-header bg-light">
-                <div>
-                    <h5 class="modal-title fw-bold text-primary mb-0">Pasar Lista</h5>
-                    <small class="text-muted">{{ rutaActiva.titulo }} - {{ rutaActiva.fecha }}</small>
-                </div>
-                <button type="button" class="btn-close" @click="cerrarModalLista" aria-label="Cerrar"></button>
-            </div>
-            
-            <div class="modal-body text-center p-4">
+    <div v-if="mostrarModalLista" class="modal fade show d-block" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content shadow-lg border-0">
                 
-                <h6 class="text-muted mb-4">
-                    Personas esperadas: <span class="badge bg-secondary fs-6 ms-2">{{ asistentesEsperados }}</span>
-                </h6>
-
-                <h4 class="fw-bold text-dark mb-4">¿Cuántas personas han venido finalmente?</h4>
-
-                <div class="d-flex justify-content-center align-items-center gap-3 my-3">
-                    
-                    <button class="btn btn-outline-danger rounded-circle shadow-sm d-flex justify-content-center align-items-center" 
-                            style="width: 60px; height: 60px;" 
-                            @click="restarAsistente">
-                        <i class="bi bi-dash fs-2"></i>
-                    </button>
-
-                    <input 
-                        type="number" 
-                        class="form-control text-center border bg-light text-primary fw-bold shadow-sm" 
-                        style="width: 120px; height: 80px; font-size: 3rem; border-radius: 15px;" 
-                        v-model.number="asistentesReales" 
-                        min="0"
-                    >
-
-                    <button class="btn btn-outline-success rounded-circle shadow-sm d-flex justify-content-center align-items-center" 
-                            style="width: 60px; height: 60px;" 
-                            @click="sumarAsistente">
-                        <i class="bi bi-plus fs-2"></i>
-                    </button>
-
+                <div class="modal-header bg-light">
+                    <div>
+                        <h5 class="modal-title fw-bold text-primary mb-0">Pasar Lista</h5>
+                        <small class="text-muted">{{ rutaActiva.titulo }} - {{ rutaActiva.fecha }}</small>
+                    </div>
+                    <button type="button" class="btn-close" @click="cerrarModalLista" aria-label="Cerrar"></button>
                 </div>
-            </div>
-            
-            <div class="modal-footer bg-light border-0 justify-content-center pb-4">
-                <button type="button" class="btn btn-primary btn-lg px-5 shadow-sm rounded-pill" @click="guardarAsistencia" :disabled="guardando">
-                    <span v-if="guardando" class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
-                    <i v-else class="bi bi-check-circle me-2"></i> 
-                    Confirmar Asistentes
-                </button>
-            </div>
+                
+                <div class="modal-body text-center p-4">
+                    
+                    <h6 class="text-muted mb-4">
+                        Personas esperadas: <span class="badge bg-secondary fs-6 ms-2">{{ asistentesEsperados }}</span>
+                    </h6>
 
+                    <h4 class="fw-bold text-dark mb-4">¿Cuántas personas han venido finalmente?</h4>
+
+                    <div class="d-flex justify-content-center align-items-center gap-3 my-3">
+                        
+                        <button class="btn btn-outline-danger rounded-circle shadow-sm d-flex justify-content-center align-items-center" 
+                                style="width: 60px; height: 60px;" 
+                                @click="restarAsistente">
+                            <i class="bi bi-dash fs-2"></i>
+                        </button>
+
+                        <input 
+                            type="number" 
+                            class="form-control text-center border bg-light text-primary fw-bold shadow-sm" 
+                            style="width: 120px; height: 80px; font-size: 3rem; border-radius: 15px;" 
+                            v-model.number="asistentesReales" 
+                            min="0"
+                        >
+
+                        <button class="btn btn-outline-success rounded-circle shadow-sm d-flex justify-content-center align-items-center" 
+                                style="width: 60px; height: 60px;" 
+                                @click="sumarAsistente">
+                            <i class="bi bi-plus fs-2"></i>
+                        </button>
+
+                    </div>
+                </div>
+                
+                <div class="modal-footer bg-light border-0 justify-content-center pb-4">
+                    <button type="button" class="btn btn-primary btn-lg px-5 shadow-sm rounded-pill" @click="guardarAsistencia" :disabled="guardando">
+                        <span v-if="guardando" class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+                        <i v-else class="bi bi-check-circle me-2"></i> 
+                        Confirmar Asistentes
+                    </button>
+                </div>
+
+            </div>
         </div>
     </div>
-</div>
 </div>
 </template>
 

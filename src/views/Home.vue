@@ -48,7 +48,6 @@ function formatearFecha(fechaSql) {
 }
 
 //Elementos del video
-//Elementos del video
 const medio = ref(null);
 const isPlaying = ref(false);
 const isMuted = ref(false);
@@ -134,6 +133,33 @@ const accionMenosVolumen = () => {
         </div>
 
         <div v-if="listaRutas.length === 0">
+
+        
+
+        <div id="carouselExample" class="carousel slide">
+        <div class="carousel-inner">
+            <h1 class="text-primary text-center fw-bold">RUTAS DESTACADAS</h1>
+            <div class="carousel-item active">
+            <img @click="router.push({ path: '/ruta/1' })" :src="'madrid.png'" class="d-block w-100" alt="Imagen de madrid">
+            </div>
+            <div class="carousel-item">
+            <img @click="router.push({ path: '/ruta/2' })" :src="'sevilla.jpg'" class="d-block w-100" alt="Imagen de Sevilla">
+            </div>
+            <div class="carousel-item">
+            <img @click="router.push({ path: '/ruta/4' })" :src="'catedral.jpg'" class="d-block w-100" alt="Imagen de Jaén">
+            </div>
+        </div>
+        <button class="carousel-control-prev" type="button" data-bs-target="#carouselExample" data-bs-slide="prev">
+            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+            <span class="visually-hidden">Previous</span>
+        </button>
+        <button class="carousel-control-next" type="button" data-bs-target="#carouselExample" data-bs-slide="next">
+            <span class="carousel-control-next-icon" aria-hidden="true"></span>
+            <span class="visually-hidden">Next</span>
+        </button>
+        </div>
+
+
             
         <div class="row mb-5 justify-content-center">
             <div class="col-12 col-lg-10">
@@ -142,8 +168,8 @@ const accionMenosVolumen = () => {
                 
                 <div class="ratio ratio-16x9 shadow-lg rounded overflow-hidden border">
                     <video ref="medio" class="bg-dark">
-                        <source :src="'tours.mp4'" type="video/mp4">
-                        <source :src="'tours.webm'" type="video/webm">
+                        <source :src="'tour.mp4'" type="video/mp4">
+                        <source :src="'tour.webm'" type="video/webm">
                         Tu navegador no soporta la reproducción de vídeos.
                     </video>
                 </div>

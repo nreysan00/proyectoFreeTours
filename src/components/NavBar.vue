@@ -36,7 +36,7 @@ const props = defineProps({
                     <li v-if="usuarioAutenticado.rol === 'admin'" class="nav-item">
                         <RouterLink class="nav-link" to="/nuevaruta">Crea Ruta</RouterLink>
                     </li>
-                    <li v-if="usuarioAutenticado.rol === 'admin' || usuarioAutenticado.rol === 'guia'" class="nav-item">
+                    <li v-if="usuarioAutenticado.rol === 'admin'" class="nav-item">
                         <RouterLink class="nav-link" to="/rutas">Rutas</RouterLink>
                     </li>
                 </template>
