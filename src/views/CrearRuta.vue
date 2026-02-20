@@ -7,7 +7,7 @@ import 'leaflet/dist/leaflet.css';
 
 //Comprobar que el usuario es admin
 const datosSesion= ref(JSON.parse(localStorage.getItem('sesion')));
-if(datosSesion.value.rol != 'admin'){
+if(datosSesion.value == null ||datosSesion.value.rol != 'admin'){
     alert('No puedes entrar aquí');
     router.push({ name: "home" });
 }

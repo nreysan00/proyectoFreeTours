@@ -2,10 +2,12 @@
     import { useRoute } from 'vue-router';
     import {ref} from 'vue'
     import { apiURL } from '@/main';
+    import router from "@/router";
 
     const route = useRoute()
     const nombreUsuario = ref(route.params.email)
     const reservas = ref([]);
+    const asignaciones = ref([]);
 
     const sesionIniciada = ref(localStorage.getItem('sesion') !== null);
     if(sesionIniciada.value.rol){
@@ -31,12 +33,25 @@
         })
         .then(response => response.json())
         .then(data => {
-            reservas.value = data;
+            asignaciones.value = data;
             console.log('Reservas del usuario:', data)
         })
         .catch(error => console.error('Error:', error));
     }
-    reservasUsuario(nombreUsuario.value);
+
+    async function asignacionesGuia(id) {
+        fetch(apiURL + `asignaciones?guia_id=${id}`, {
+            method: 'GET',
+        })
+        .then(response => response.json())
+        .then(data => {
+            reservas.value = data;
+            console.log('Asignaciones del guía:', data)
+        })
+        .catch(error => console.error('Error:', error));
+    }    
+
+    rol === 'guia' ? asignacionesGuia(datosSesion.id) : reservasUsuario(nombreUsuario.value);
 
     async function cancelarReserva(id) {
         if (!confirm("¿Seguro que quieres cancelar esta reserva?")) return;
@@ -114,7 +129,7 @@
             </div>
         </div>
         <!-- Orders Table-->
-        <div class="col-lg-8 pb-5">
+        <div v-if="rol == 'cliente'" class="col-lg-8 pb-5">
             <div class="d-flex justify-content-end pb-3">
                 <div class="form-inline">
                     <label class="text-muted mr-3" for="order-sort">Sort Orders</label>
@@ -148,6 +163,45 @@
                     <td>{{ reserva.ruta_latitud }} - {{ reserva.ruta_longitud }}</td>
                     <td>
                         <button @click="cancelarReserva(reserva.reserva_id)" class="btn-danger">Cancelar Reserva</button>
+                    </td>
+                </tr>
+            </tbody>
+            </div>
+        </div>
+        <div v-else-if="rol == 'guia'" class="col-lg-8 pb-5">
+            <div class="d-flex justify-content-end pb-3">
+                <div class="form-inline">
+                    <label class="text-muted mr-3" for="order-sort">Sort Orders</label>
+                    <select class="form-control" id="order-sort">
+                        <option>All</option>
+                        <option>Delivered</option>
+                        <option>In Progress</option>
+                        <option>Delayed</option>
+                        <option>Canceled</option>
+                    </select>
+                </div>
+            </div>
+            <div class="table-responsive">
+                <caption>Mis Rutas</caption>
+                <thead>
+                <tr>
+                <th scope="col">Ruta</th>
+                <th scope="col">Localidad</th>
+                <th scope="col">Fecha</th>
+                <th scope="col">Hora</th>
+                <th scope="col">Ubicación</th>
+                <th scope="col">Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr v-for="asignacion in asignaciones" :key="asignacion.id">
+                    <td>{{ asignacion.ruta_titulo }}</td>
+                    <td>{{ asignacion.ruta_localidad }}</td>
+                    <td>{{ asignacion.ruta_fecha }}</td>
+                    <td>{{ asignacion.ruta_hora }}</td>
+                    <td>{{ asignacion.ruta_latitud }} - {{ asignacion.ruta_longitud }}</td>
+                    <td>
+                        <button @click="cancelarAsignacion(asignacion.asignacion_id)" class="btn-danger">Cancelar Asignación</button>
                     </td>
                 </tr>
             </tbody>

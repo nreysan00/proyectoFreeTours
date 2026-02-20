@@ -46,6 +46,61 @@ function formatearFecha(fechaSql) {
     }
     return fechaSql;
 }
+
+//Elementos del video
+//Elementos del video
+const medio = ref(null);
+const isPlaying = ref(false);
+const isMuted = ref(false);
+
+const accionPlay = () => {
+  if (!medio.value) return;
+
+  if (medio.value.paused || medio.value.ended) {
+    medio.value.play();
+    isPlaying.value = true;
+  } else {
+    medio.value.pause();
+    isPlaying.value = false;
+  }
+};
+
+const accionReiniciar = () => {
+  if (!medio.value) return;
+  
+  medio.value.currentTime = 0;
+  medio.value.play();
+  isPlaying.value = true;
+};
+
+const accionRetrasar = () => {
+  if (!medio.value) return;
+  medio.value.currentTime = Math.max(0, medio.value.currentTime - 5);
+};
+
+const accionAdelantar = () => {
+  if (!medio.value) return;
+  medio.value.currentTime = Math.min(medio.value.duration, medio.value.currentTime + 5);
+};
+
+const accionSilenciar = () => {
+  if (!medio.value) return;
+  
+  medio.value.muted = !medio.value.muted;
+  isMuted.value = medio.value.muted;
+};
+
+const accionMasVolumen = () => {
+  if (!medio.value) return;
+  let nuevoVolumen = medio.value.volume + 0.1;
+  medio.value.volume = Math.min(1, Math.round(nuevoVolumen * 10) / 10);
+};
+
+const accionMenosVolumen = () => {
+  if (!medio.value) return;
+  let nuevoVolumen = medio.value.volume - 0.1;
+  medio.value.volume = Math.max(0, Math.round(nuevoVolumen * 10) / 10);
+};
 </script>
 <template>
     <div class="container py-4">
@@ -80,14 +135,60 @@ function formatearFecha(fechaSql) {
 
         <div v-if="listaRutas.length === 0">
             
-            <div class="row mb-5 justify-content-center">
-                <div class="col-12 col-lg-10">
-                    <h3 class="text-center mb-4">Descubre la experiencia FreeTour</h3>
-                    <div class="ratio ratio-16x9 shadow-lg rounded overflow-hidden border">
-                        <iframe width="560" height="315" src="https://www.youtube.com/embed/2NLlFpKgwcw?si=dJJ0Ix7JymXzGrzV" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+        <div class="row mb-5 justify-content-center">
+            <div class="col-12 col-lg-10">
+                
+                <h3 class="text-center mb-4 text-primary fw-bold">Descubre la experiencia FreeTour</h3>
+                
+                <div class="ratio ratio-16x9 shadow-lg rounded overflow-hidden border">
+                    <video ref="medio" class="bg-dark">
+                        <source :src="'tours.mp4'" type="video/mp4">
+                        <source :src="'tours.webm'" type="video/webm">
+                        Tu navegador no soporta la reproducción de vídeos.
+                    </video>
+                </div>
+                
+                <div class="d-flex align-items-center justify-content-center gap-3 mt-4 flex-wrap p-3 bg-light rounded shadow-sm border">
+                    
+                    <button class="btn btn-outline-secondary rounded-circle" @click="accionReiniciar" title="Reiniciar" aria-label="Reiniciar vídeo">
+                        <i class="bi bi-arrow-counterclockwise fs-5"></i>
+                    </button>
+
+                    <div class="btn-group shadow-sm">
+                        <button class="btn btn-primary" @click="accionRetrasar" title="Retrasar" aria-label="Retrasar vídeo">
+                            <i class="bi bi-rewind-fill"></i>
+                        </button>
+                        
+                        <button class="btn btn-primary px-4" @click="accionPlay" title="Reproducir/Pausar" aria-label="Dale al play">
+                            <i class="bi bi-play-fill fs-4"></i>
+                        </button>
+                        
+                        <button class="btn btn-primary" @click="accionAdelantar" title="Adelantar" aria-label="Adelantar">
+                            <i class="bi bi-fast-forward-fill"></i>
+                        </button>
                     </div>
+
+                    <div class="text-muted opacity-50 d-none d-sm-block">|</div>
+
+                    <button class="btn btn-outline-danger rounded-circle" @click="accionSilenciar" title="Silenciar" aria-label="Silenciar">
+                        <i class="bi bi-volume-mute-fill fs-5"></i>
+                    </button>
+
+                    <div class="input-group shadow-sm" style="width: auto;">
+                        <button class="btn btn-secondary" @click="accionMenosVolumen" title="Bajar volumen" aria-label="Menos volumen">
+                            <i class="bi bi-volume-down-fill"></i>
+                        </button>
+                        
+                        <span class="input-group-text bg-white border-secondary text-secondary fw-bold px-2">Vol</span>
+                        
+                        <button class="btn btn-secondary" @click="accionMasVolumen" title="Subir volumen" aria-label="Más volumen">
+                            <i class="bi bi-volume-up-fill"></i>
+                        </button>
+                    </div>
+
                 </div>
             </div>
+        </div>
 
             <div class="row mb-5 justify-content-center">
                 <div class="col-12 col-lg-8">
@@ -129,7 +230,7 @@ function formatearFecha(fechaSql) {
                             </h2>
                             <div id="collapseThree" class="accordion-collapse collapse" aria-labelledby="headingThree" data-bs-parent="#accordionFAQ">
                                 <div class="accordion-body text-secondary">
-                                    Al hacer click en los detalles de la ruta podrás ver el punto exacto de encuentro en el mapa. Además, nuestros guías siempre llevan un <strong>paraguas o acreditación de color azul</strong> para que puedas reconocerlos fácilmente.
+                                    Al hacer click en los detalles de la ruta podrás ver el punto exacto de encuentro en el mapa. Además, nuestros guías siempre llevan un <strong>paraguas o acreditación de color verde</strong> para que puedas reconocerlos fácilmente.
                                 </div>
                             </div>
                         </div>
