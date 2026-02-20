@@ -243,7 +243,7 @@ async function guardarAsistencia() {
                     <td>{{ asignacion.ruta_fecha }}</td>
                     <td>{{ asignacion.ruta_hora }}</td>
                     <td>{{ asignacion.ruta_latitud }} - {{ asignacion.ruta_longitud }}</td>
-                    <td>{{ asignacion.reservas[0].num_personas }}</td>
+                    <td>{{ asignacion.reservas.reduce((total, reserva) => total + reserva.num_personas, 0) }}</td>
                     <td v-if="asignacion.reservas[0].num_personas < 10">
                         <i class="bi bi-exclamation-triangle text-warning"></i>
                         <button @click="abrirModalLista(asignacion)" class="btn btn-success">Pasar Lista</button>
