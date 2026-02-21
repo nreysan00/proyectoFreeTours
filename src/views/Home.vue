@@ -168,8 +168,8 @@ const accionMenosVolumen = () => {
                 
                 <div class="ratio ratio-16x9 shadow-lg rounded overflow-hidden border">
                     <video ref="medio" class="bg-dark">
-                        <source :src="'tour.mp4'" type="video/mp4">
-                        <source :src="'tour.webm'" type="video/webm">
+                        <source :src="'tours.mp4'" type="video/mp4">
+                        <source :src="'tours.webm'" type="video/webm">
                         Tu navegador no soporta la reproducción de vídeos.
                     </video>
                 </div>
