@@ -71,7 +71,7 @@ function confirmarReserva(numPlazas) {
 <template>
     <div class="container py-5">
         <div class="text-end mt-5">
-                <button class="btn btn-secondary" @click="router.push({ name: 'home' }) ">
+                <button class="btn btn-secondary" @click="router.push({ name: 'home' }) " aria-label="Volver al inicio">
                     <i class="bi bi-arrow-left-circle"></i> Volver al inicio
                 </button>
             </div>

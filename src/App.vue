@@ -70,9 +70,9 @@ function actualizaDatosSesion(usuario){
   }
 
   .main-content {
-  flex: 1; /* Rellena todo el hueco entre el Navbar y el Footer */
-  overflow-y: auto; /* Hace que SOLO esta parte tenga scroll */
-  background-color: #f8f9fa; /* (Opcional) un color de fondo suavito */
+  flex: 1;
+  overflow-y: auto;
+  background-color: #f8f9fa;
   }
   
   .transition-fade {

@@ -1,5 +1,4 @@
 <script setup>
-// Importamos RouterLink para que los enlaces funcionen como una SPA sin recargar la página
 import { RouterLink } from 'vue-router';
 </script>
 
@@ -61,14 +60,13 @@ import { RouterLink } from 'vue-router';
 </template>
 
 <style scoped>
-/* Animación suave para los enlaces al pasar el ratón */
 .transition-link {
     transition: all 0.3s ease;
-    display: inline-block; /* Necesario para que el transform funcione en elementos <a> */
+    display: inline-block;
 }
 
 .transition-link:hover {
-    color: #ffffff !important; /* Se ilumina a blanco puro */
-    transform: translateY(-3px); /* Pequeño salto hacia arriba */
+    color: #ffffff !important;
+    transform: translateY(-3px);
 }
 </style>

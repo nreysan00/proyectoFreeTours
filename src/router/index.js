@@ -85,7 +85,6 @@ const router = createRouter({
             beforeEnter: (to, from, next) => {
                 const usuarioRaw = localStorage.getItem('sesion');
 
-                // 2. Si NO está logueado, se redirige al usuario al login
                 if (!usuarioRaw) {
                     alert("Debes ser administrador para acceder.");
                     return next({ name: 'login' }); 
@@ -93,7 +92,6 @@ const router = createRouter({
 
                 const usuario = JSON.parse(usuarioRaw);
 
-                // 4. Si ha puesto un email en la URL, comprobamos que sea el suyo (o sea admin)
                 if (usuario.rol === 'admin') {
                     next();
                 } else {
@@ -116,7 +114,6 @@ const router = createRouter({
 
                 const usuario = JSON.parse(usuarioRaw);
 
-                // 4. Si ha puesto un email en la URL, comprobamos que sea el suyo (o sea admin)
                 if (usuario.rol === 'admin') {
                     next();
                 } else {

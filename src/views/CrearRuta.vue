@@ -19,9 +19,9 @@ const guias = ref([]);
 const error = ref('');
 
 //Variables para el buscador
-const busqueda = ref(''); // Lo que el usuario escribe en el buscador
-const buscando = ref(false); // Para mostrar un spinner mientras busca
-const errorBusqueda = ref(''); // Si no encuentra el lugar
+const busqueda = ref(''); 
+const buscando = ref(false); 
+const errorBusqueda = ref('');
 
 //Variables e iniciador del mapa al enter en CrearRuta
 const mapContainer = ref(null);
@@ -29,29 +29,23 @@ let map = null;
 let marker = null;
 
 onMounted(() => {
-    // Si no has puesto tu clave de Google Maps, Leaflet usa OpenStreetMap (Gratis)
-    // Centramos el mapa inicialmente en España (Madrid) con un zoom de 6
     map = L.map(mapContainer.value).setView([40.4168, -3.7038], 6);
 
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
         attribution: '&copy; OpenStreetMap contributors'
     }).addTo(map);
 
-    // 3. Detectar el clic en el mapa
     map.on('click', (e) => {
         const lat = e.latlng.lat;
         const lng = e.latlng.lng;
 
-        // Actualizamos los campos del formulario reactivamente (redondeado a 6 decimales)
         form.value.latitud = lat.toFixed(6);
         form.value.longitud = lng.toFixed(6);
 
-        // Si ya hay un marcador, lo borramos antes de poner uno nuevo
         if (marker) {
             map.removeLayer(marker);
         }
 
-        // Añadimos el nuevo marcador en la posición del clic
         marker = L.marker([lat, lng]).addTo(map);
     });
 });
@@ -142,12 +136,11 @@ fetch(apiURL + 'rutas', {
 .then(response => response.json())
 .then(data => {
     console.log('Respuesta:', data)
-    mostrarToast('Ruta creada correctamente', 'primary');
+    mostrarToast('Ruta creada correctamente', 'success');
     setInterval(() => {
         router.push({ name: "rutas" });
     }, 1500);
     
-
 
 })
 .catch(error => console.error('Error:', error));
@@ -186,22 +179,22 @@ cargarGuias();
                             
                             <div class="mb-3">
                                 <label for="titulo" class="form-label fw-bold">Título del Tour</label>
-                                <input v-model="form.titulo" type="text" id="titulo" class="form-control" placeholder="Ej. Misterios de Madrid" required>
+                                <input v-model="form.titulo" type="text" id="titulo" class="form-control" placeholder="Ej. Misterios de Madrid" required aria-required="true">
                             </div>
 
                             <div class="mb-3">
                                 <label for="localidad" class="form-label fw-bold">Localidad</label>
-                                <input v-model="form.localidad" type="text" id="localidad" class="form-control" placeholder="Ej. Madrid" required>
+                                <input v-model="form.localidad" type="text" id="localidad" class="form-control" placeholder="Ej. Madrid" required aria-required="true">
                             </div>
 
                             <div class="row">
                                 <div class="col-6 mb-3">
                                     <label for="fecha" class="form-label fw-bold">Fecha</label>
-                                    <input v-model="form.fecha" type="date" id="fecha" class="form-control" required>
+                                    <input v-model="form.fecha" type="date" id="fecha" class="form-control" required aria-required="true">
                                 </div>
                                 <div class="col-6 mb-3">
                                     <label for="hora" class="form-label fw-bold">Hora</label>
-                                    <input v-model="form.hora" type="time" id="hora" class="form-control" required>
+                                    <input v-model="form.hora" type="time" id="hora" class="form-control" required aria-required="true">
                                 </div>
                             </div>
 
@@ -226,7 +219,7 @@ cargarGuias();
 
                             <div class="mb-3">
                                 <label for="descripcion" class="form-label fw-bold">Descripción de la ruta</label>
-                                <textarea v-model="form.descripcion" id="descripcion" class="form-control" rows="4" placeholder="Explica qué lugares visitaréis y qué hace especial a este tour..." required></textarea>
+                                <textarea v-model="form.descripcion" id="descripcion" class="form-control" rows="4" placeholder="Explica qué lugares visitaréis y qué hace especial a este tour..." required aria-required="true"></textarea>
                             </div>
 
                             <div class="mb-3">

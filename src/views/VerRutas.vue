@@ -46,7 +46,7 @@ async function asignarRuta(id, guia) {
     .then(response => response.json())
     .then(data => {
         console.log('Respuesta:', data);
-        mostrarToast('Guía asignado correctamente', 'primary');
+        mostrarToast('Guía asignado correctamente', 'success');
         setInterval(() => {
             location.reload();
         }, 500);
@@ -76,6 +76,7 @@ function listarGuias() {
 listarGuias();
 
 async function borrarRuta(id) {
+    if (!confirm("¿Seguro que quieres borrar esta ruta?")) return;
     fetch(apiURL + 'rutas?id=' + id, {
         method: 'DELETE',
     })
@@ -83,7 +84,7 @@ async function borrarRuta(id) {
     .then(data => {
         console.log('Respuesta:', data);
         mostrarToast('Ruta eliminada correctamente', 'success');
-        listarRutas();
+        location.reload();
     })
     .catch(error => console.error('Error:', error));
 }
@@ -124,7 +125,7 @@ async function borrarRuta(id) {
                             
                             <td>
                                 <div v-if="ruta.foto && ruta.foto.length > 30" class="ratio ratio-1x1 shadow-sm rounded" style="width: 50px;">
-                                    <img :src="ruta.foto" alt="Foto" class="rounded object-fit-cover">
+                                    <img :src="ruta.foto" alt="Imagen de la ruta" class="rounded object-fit-cover">
                                 </div>
                                 <div v-else class="text-muted small"><i class="bi bi-image-fill fs-3"></i></div>
                             </td>

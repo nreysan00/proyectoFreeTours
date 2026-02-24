@@ -311,7 +311,7 @@ const accionMenosVolumen = () => {
             </div>
 
             <div class="text-center mt-5">
-                <button class="btn btn-secondary" @click="listaRutas = []; fecha = ''; localidad = ''">
+                <button class="btn btn-secondary" @click="listaRutas = []; fecha = ''; localidad = ''" aria-label="Volver al inicio">
                     <i class="bi bi-arrow-left-circle"></i> Volver al inicio
                 </button>
             </div>

@@ -11,11 +11,11 @@ const usuarioRegistrado = ref(false);
 const mostrarPassword = ref(false);
 
 const formatoEmailValido = computed(() => {
-    // Si está vacío, no lo evaluamos todavía como "formato inválido" para la vista, 
-    // pero el botón de registro sí estará bloqueado.
+    /* Si está vacío, no lo evaluamos todavía como "formato inválido" para la vista, 
+    pero el botón de registro sí estará bloqueado.*/
     if (form.value.email.length === 0) return true; 
     
-    // Expresión regular que obliga a tener: texto + @ + texto + . + texto
+    // Expresión regular controlar formato de email
     const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     return regex.test(form.value.email);
 });
@@ -87,6 +87,7 @@ async function registroUsuario(){
                             type="text" 
                             class="form-control" 
                             placeholder="Tu nombre completo"
+                            aria-required="true"
                             required
                         />
                     </div>
@@ -100,6 +101,7 @@ async function registroUsuario(){
                             class="form-control" 
                             :class="{ 'is-invalid': !formatoEmailValido }"
                             placeholder="nombre@ejemplo.com"
+                            aria-required="true"
                             required
                         />
                         <div class="invalid-feedback fw-bold">
@@ -134,6 +136,7 @@ async function registroUsuario(){
                                 placeholder="******"
                                 @focus="inputActivo = true"
                                 @blur="inputActivo = false"
+                                aria-required="true"
                                 required
                             />
                             <button 

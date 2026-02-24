@@ -82,8 +82,7 @@
     // Obtenemos cuántos deberían venir según la base de datos
     asistentesEsperados.value = ruta.asistentes || 0;
     
-    // Por comodidad para el guía, pre-rellenamos el input asumiendo que han venido todos.
-    // Si falta alguien, solo tiene que darle al botón de restar.
+    // Por defecto se asume que todos van y el guia modifica la lista
     asistentesReales.value = ruta.asistentes || 0; 
     
     mostrarModalLista.value = true;
@@ -103,23 +102,9 @@ function restarAsistente() {
         asistentesReales.value--;
     }
 }
-
+//Fucion para simular la accion del guia de pasar lista
 async function guardarAsistencia() {
     guardando.value = true;
-    
-    console.log(`Guardando en BD: La ruta ${rutaActiva.value.id} tuvo ${asistentesReales.value} asistentes reales.`);
-
-    // Aquí harías el POST a tu API (PHP) para actualizar el número final
-    /*
-    fetch(apiURL + 'guardar_asistencia', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-            ruta_id: rutaActiva.value.id,
-            asistentes_reales: asistentesReales.value
-        })
-    }).then(...)
-    */
 
     // Simulamos que tarda 1 segundo en guardar
     setTimeout(() => {

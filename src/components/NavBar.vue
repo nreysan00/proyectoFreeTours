@@ -7,37 +7,37 @@ const props = defineProps({
 </script>
 
 <template>
-    <nav class="navbar navbar-expand navbar-light bg-light px-3">
+    <nav class="navbar navbar-expand navbar-light bg-success px-3 shadow-lg">
         <div class="collapse navbar-collapse" id="navbarSupportedContent">
             
             <ul class="navbar-nav mr-auto">
                 <li class="nav-item">
-                    <RouterLink class="nav-link" to="/">Inicio</RouterLink>
+                    <RouterLink class="nav-link text-white fw-bold" to="/">Inicio</RouterLink>
                 </li>
 
                 <template v-if="!usuarioAutenticado">
                     <li class="nav-item">
-                        <RouterLink class="nav-link" to="/register">Registro</RouterLink>
+                        <RouterLink class="nav-link text-white fw-bold" to="/register">Registro</RouterLink>
                     </li>
                     <li class="nav-item">
-                        <RouterLink class="nav-link" to="/login">Login</RouterLink>
+                        <RouterLink class="nav-link text-white fw-bold" to="/login">Login</RouterLink>
                     </li>
                 </template>
 
                 <template v-if="usuarioAutenticado">
                     <li class="nav-item">
-                        <RouterLink class="nav-link" :to="`/micuenta/${usuarioAutenticado.email}`">
+                        <RouterLink class="nav-link text-white fw-bold" :to="`/micuenta/${usuarioAutenticado.email}`">
                             Mi Cuenta
                         </RouterLink>
                     </li>
                     <li v-if="usuarioAutenticado.rol === 'admin'" class="nav-item">
-                        <RouterLink class="nav-link" to="/admin">Admin Usuarios</RouterLink>
+                        <RouterLink class="nav-link text-white fw-bold" to="/admin">Admin Usuarios</RouterLink>
                     </li>
                     <li v-if="usuarioAutenticado.rol === 'admin'" class="nav-item">
-                        <RouterLink class="nav-link" to="/nuevaruta">Crea Ruta</RouterLink>
+                        <RouterLink class="nav-link text-white fw-bold" to="/nuevaruta">Crea Ruta</RouterLink>
                     </li>
                     <li v-if="usuarioAutenticado.rol === 'admin'" class="nav-item">
-                        <RouterLink class="nav-link" to="/rutas">Rutas</RouterLink>
+                        <RouterLink class="nav-link text-white fw-bold" to="/rutas">Rutas</RouterLink>
                     </li>
                 </template>
                 
@@ -47,7 +47,6 @@ const props = defineProps({
 </template>
 
 <style scoped>
-/* Opcional: Separación extra entre los enlaces */
 .nav-item {
     margin-right: 10px;
 }
