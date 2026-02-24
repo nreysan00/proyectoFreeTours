@@ -4,6 +4,7 @@ import router from "@/router";
 import {apiURL} from "@/main";
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
+import { mostrarToast } from "@/toast";
 
 //Comprobar que el usuario es admin
 const datosSesion= ref(JSON.parse(localStorage.getItem('sesion')));
@@ -67,26 +68,28 @@ async function buscarDireccion() {
     errorBusqueda.value = '';
 
     try {
-        // Usamos la API gratuita de Nominatim (OpenStreetMap)
-        const url = `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(busqueda.value)}`;
-        const response = await fetch(url);
+        // Añadimos limit=1 para ir más rápido y un email (REQUISITO DE NOMINATIM)
+        const email = "1smrnrs2000@gmail.com"; // <--- ¡CAMBIA ESTO POR TU CORREO!
+        const url = `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(busqueda.value)}&limit=1&email=${email}`;
+        
+        // Añadimos cabeceras amigables para que no nos bloquee por CORS
+        const response = await fetch(url, {
+            headers: { 'Accept-Language': 'es' }
+        });
+
         const data = await response.json();
 
         if (data && data.length > 0) {
-            // Cogemos el primer resultado
             const lat = parseFloat(data[0].lat);
             const lng = parseFloat(data[0].lon);
             
-            // Actualizamos form y mapa
             actualizarCoordenadas(lat, lng);
-            
-            // Hacemos zoom al lugar encontrado (15 es un buen nivel de zoom para calles)
             map.setView([lat, lng], 15);
         } else {
             errorBusqueda.value = 'No se encontró la ubicación. Prueba a ser más específico.';
         }
     } catch (error) {
-        errorBusqueda.value = 'Error al conectar con el buscador.';
+        errorBusqueda.value = 'Error al conectar con el buscador del mapa.';
         console.error('Error geocoding:', error);
     } finally {
         buscando.value = false;
@@ -101,6 +104,25 @@ function actualizarCoordenadas(lat, lng) {
         map.removeLayer(marker);
     }
     marker = L.marker([lat, lng]).addTo(map);
+}
+// Función para procesar la foto seleccionada por el usuario
+function procesarFoto(evento) {
+    const archivo = evento.target.files[0];
+    if (!archivo) return;
+
+    // Usamos FileReader para leer el contenido del archivo
+    const reader = new FileReader();
+    
+    // Cuando termine de leer el archivo, ejecutamos esto:
+    reader.onload = (e) => {
+        // e.target.result contiene la imagen convertida a un string de texto gigante
+        // Lo guardamos directamente en nuestro formulario
+        form.value.foto = e.target.result; 
+        console.log("Imagen convertida a texto lista para enviar!");
+    };
+    
+    // Le decimos que lo lea como una URL de datos (Base64)
+    reader.readAsDataURL(archivo);
 }
 
 async function nuevaRuta(){
@@ -126,7 +148,11 @@ fetch(apiURL + 'rutas', {
 .then(response => response.json())
 .then(data => {
     console.log('Respuesta:', data)
-    router.push({ name: "rutas" });
+    mostrarToast('Ruta creada correctamente', 'primary');
+    setInterval(() => {
+        router.push({ name: "rutas" });
+    }, 1500);
+    
 
 
 })
@@ -140,151 +166,106 @@ async function asignarRuta(id) {
 */
 </script>
 <template>
-    <div class="container d-flex justify-content-center py-5"  style="overflow-y: scroll;">
-        
-        <div class="card shadow p-4" style="width: 100%; max-width: 450px;">
-            <div class="card-body">
-                
-                <h3 class="text-center mb-4">Crear Ruta</h3>
+    <div class="container py-5">
+        <div class="card shadow-lg border-0 rounded-4 overflow-hidden max-w-800 mx-auto">
+            
+            <div class="card-header bg-primary text-white text-center py-4">
+                <h2 class="mb-0 fw-bold"><i class="bi bi-map-fill me-2"></i>Crear Nueva Ruta</h2>
+                <p class="mb-0 text-white-50 mt-1">Completa los datos para publicar tu próximo Free Tour</p>
+            </div>
 
+            <div class="card-body p-4 p-md-5 bg-light">
                 <form @submit.prevent="nuevaRuta">
                     
-                    <div class="mb-3">
-                        <label for="titulo" class="form-label">Título Ruta</label>
-                        <input 
-                            id="titulo"
-                            v-model="form.titulo" 
-                            type="text" 
-                            class="form-control" 
-                            placeholder="Nombre de la ruta"
-                            required
-                        />
-                    </div>
-
-
-                    <div class="mb-3">
-                        <label for="localidad" class="form-label">Localidad</label>
-                        <input 
-                            id="localidad"
-                            v-model="form.localidad" 
-                            type="text" 
-                            class="form-control" 
-                            placeholder="Jaén"
-                            required
-                        />
-                    </div>
-
-                    <div class="mb-3">
-                        <label for="descripcion" class="form-label">Descripción</label>
-                        <input 
-                            id="descripcion"
-                            v-model="form.descripcion" 
-                            type="text" 
-                            class="form-control"
-                            placeholder="En esta ruta veremos..."
-                            required
-                        />
-                    </div>
-
-                    <div class="mb-3">
-                        <label for="foto" class="form-label">Foto general de la ruta</label>
-                        <input 
-                            id="foto"
-                            v-model="form.foto" 
-                            type="text"
-                            class="form-control" 
-                            required
-                        />
-                    </div>
-
-                    <div class="mb-3">
-                        <label for="fecha" class="form-label">Fecha</label>
-                        <input 
-                            id="fecha"
-                            v-model="form.fecha" 
-                            type="date"
-                            class="form-control"
-                            required
-                        />
-                    </div>
-
-                    <div class="mb-3">
-                        <label for="hora" class="form-label">Hora</label>
-                        <input 
-                            id="hora"
-                            v-model="form.hora" 
-                            type="time"
-                            class="form-control"
-                            required
-                        />
-                    </div>
-                    <!-- Div para la ubicación por Google Maps -->
-                    <div class="mb-3">
-                        <label class="form-label fw-bold text-primary">Busca la ubicación o haz clic en el mapa:</label>
+                    <div class="row g-4 mb-5">
                         
-                        <div class="input-group mb-2">
-                            <input 
-                                v-model="busqueda" 
-                                @keyup.enter.prevent="buscarDireccion" 
-                                type="text" 
-                                class="form-control" 
-                                placeholder="Ej: Catedral de Jaén, Madrid, Plaza Mayor..."
-                            >
-                            <button @click.prevent="buscarDireccion" class="btn btn-primary" :disabled="buscando">
-                                <span v-if="buscando">Buscando...</span>
-                                <span v-else><i class="bi bi-search"></i> Buscar</span>
-                            </button>
-                        </div>
-                        
-                        <div v-if="errorBusqueda" class="text-danger small mb-2">
-                            {{ errorBusqueda }}
+                        <div class="col-12 col-lg-6">
+                            <h5 class="text-primary border-bottom pb-2 mb-4">
+                                <i class="bi bi-info-circle"></i> Información General
+                            </h5>
+                            
+                            <div class="mb-3">
+                                <label for="titulo" class="form-label fw-bold">Título del Tour</label>
+                                <input v-model="form.titulo" type="text" id="titulo" class="form-control" placeholder="Ej. Misterios de Madrid" required>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="localidad" class="form-label fw-bold">Localidad</label>
+                                <input v-model="form.localidad" type="text" id="localidad" class="form-control" placeholder="Ej. Madrid" required>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-6 mb-3">
+                                    <label for="fecha" class="form-label fw-bold">Fecha</label>
+                                    <input v-model="form.fecha" type="date" id="fecha" class="form-control" required>
+                                </div>
+                                <div class="col-6 mb-3">
+                                    <label for="hora" class="form-label fw-bold">Hora</label>
+                                    <input v-model="form.hora" type="time" id="hora" class="form-control" required>
+                                </div>
+                            </div>
                         </div>
 
-                        <div ref="mapContainer" class="mapa-leaflet" style="height: 300px; width: 100%; border-radius: 8px; border: 1px solid #ccc;"></div>
-                    </div>
-                    <!-- Al hacer click en el mapa se pone automáticamente la ubicación en los cuadros del formulario de Latitud y Longitud-->
-                    <div class="row">
-                        <div class="col-6 mb-3">
-                            <label for="latitud" class="form-label">Latitud</label>
-                            <input 
-                                id="latitud"
-                                v-model="form.latitud"
-                                type="text"
-                                class="form-control bg-light"
-                                readonly
-                                required
-                            />
-                        </div>
-                        <div class="col-6 mb-3">
-                            <label for="longitud" class="form-label">Longitud</label>
-                            <input 
-                                id="longitud"
-                                v-model="form.longitud"
-                                type="text"
-                                class="form-control bg-light"
-                                readonly
-                                required
-                            />
+                        <div class="col-12 col-lg-6">
+                            <h5 class="text-primary border-bottom pb-2 mb-4">
+                                <i class="bi bi-card-text"></i> Detalles y Multimedia
+                            </h5>
+
+                            <div class="mb-3">
+                                <label for="descripcion" class="form-label fw-bold">Descripción de la ruta</label>
+                                <textarea v-model="form.descripcion" id="descripcion" class="form-control" rows="4" placeholder="Explica qué lugares visitaréis y qué hace especial a este tour..." required></textarea>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="foto" class="form-label fw-bold">Foto de portada</label>
+                                <input @change="procesarFoto" type="file" id="foto" class="form-control" accept="image/png, image/jpeg, image/webp">
+                            </div>
+
+                            <div v-if="form.foto" class="text-center mt-3 p-2 border rounded bg-white shadow-sm">
+                                <small class="text-muted d-block mb-2"><i class="bi bi-eye"></i> Previsualización:</small>
+                                <img :src="form.foto" alt="Previsualización" class="img-fluid rounded" style="max-height: 150px; object-fit: cover; width: 100%;">
+                            </div>
                         </div>
                     </div>
 
-                    <div class="mb-3">
-                        <label for="guiaId" class="form-label">ID GUIA</label>
-                        <input
-                            id="guiaId"
-                            v-model="form.guia_id"
-                            type="text"
-                            class="form-control"
-                        />
+                    <div class="row border-top pt-4">
+                        <div class="col-12">
+                            <h5 class="text-primary mb-4">
+                                <i class="bi bi-geo-alt-fill"></i> Punto de Encuentro
+                            </h5>
+
+                            <div class="input-group mb-3 shadow-sm">
+                                <input v-model="busqueda" @keyup.enter.prevent="buscarDireccion" type="text" class="form-control" placeholder="Busca una calle o monumento para centrar el mapa...">
+                                <button @click.prevent="buscarDireccion" class="btn btn-secondary" type="button" :disabled="buscando">
+                                    <span v-if="buscando" class="spinner-border spinner-border-sm" aria-hidden="true"></span>
+                                    <i v-else class="bi bi-search"></i> Buscar
+                                </button>
+                            </div>
+                            
+                            <div v-if="errorBusqueda" class="alert alert-warning py-2 mb-3">
+                                <i class="bi bi-exclamation-triangle"></i> {{ errorBusqueda }}
+                            </div>
+
+                            <div ref="mapContainer" class="mapa-leaflet rounded shadow-sm border mb-3" style="height: 350px; width: 100%;"></div>
+
+                            <div class="d-flex justify-content-between align-items-center bg-white p-3 border rounded shadow-sm">
+                                <span class="text-muted small">Haz clic en el mapa para fijar el punto de encuentro exacto.</span>
+                                <div>
+                                    <span class="badge bg-light text-dark border me-2">Lat: {{ form.latitud || '---' }}</span>
+                                    <span class="badge bg-light text-dark border">Lng: {{ form.longitud || '---' }}</span>
+                                </div>
+                            </div>
+
+                        </div>
                     </div>
 
-                    <div v-if="error" class="alert alert-danger text-center" role="alert">
-                        {{ error }}
+                    <hr class="my-5 text-muted">
+                    
+                    <div class="text-center">
+                        <button type="submit" class="btn btn-primary btn-lg px-5 shadow-sm rounded-pill fw-bold">
+                            <i class="bi bi-cloud-arrow-up-fill me-2"></i> Publicar Ruta
+                        </button>
                     </div>
-
-                    <button type="submit" class="btn btn-success w-100 mt-2">
-                        Crear Ruta
-                    </button>
 
                 </form>
             </div>

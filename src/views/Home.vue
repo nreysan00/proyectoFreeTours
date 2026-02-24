@@ -276,7 +276,7 @@ const accionMenosVolumen = () => {
                     <div class="card h-100 shadow-sm border-0 transition-hover">
                         
                         <img 
-                            :src="ruta.foto ? ruta.foto : 'https://www.elmesondespeñaperros.es/wp-content/uploads/catedral-ja-e1423836657491.jpg'" 
+                            :src="ruta.foto" 
                             class="card-img-top" 
                             alt="Imagen de la ruta"
                             style="height: 220px; object-fit: cover;" 
