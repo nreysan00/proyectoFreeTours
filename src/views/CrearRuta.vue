@@ -15,6 +15,7 @@ if(datosSesion.value == null ||datosSesion.value.rol != 'admin'){
 
 const emit = defineEmits(["registroUsu"]);
 const form = ref({ titulo: '', localidad: '', descripcion: '', foto: '', fecha: '', hora: '', latitud: '', longitud: '', guia_id: ''});
+const guias = ref([]);
 const error = ref('');
 
 //Variables para el buscador
@@ -68,11 +69,9 @@ async function buscarDireccion() {
     errorBusqueda.value = '';
 
     try {
-        // Añadimos limit=1 para ir más rápido y un email (REQUISITO DE NOMINATIM)
-        const email = "1smrnrs2000@gmail.com"; // <--- ¡CAMBIA ESTO POR TU CORREO!
+        const email = "1smrnrs2000@gmail.com";
         const url = `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(busqueda.value)}&limit=1&email=${email}`;
         
-        // Añadimos cabeceras amigables para que no nos bloquee por CORS
         const response = await fetch(url, {
             headers: { 'Accept-Language': 'es' }
         });
@@ -110,18 +109,13 @@ function procesarFoto(evento) {
     const archivo = evento.target.files[0];
     if (!archivo) return;
 
-    // Usamos FileReader para leer el contenido del archivo
     const reader = new FileReader();
     
-    // Cuando termine de leer el archivo, ejecutamos esto:
     reader.onload = (e) => {
-        // e.target.result contiene la imagen convertida a un string de texto gigante
-        // Lo guardamos directamente en nuestro formulario
         form.value.foto = e.target.result; 
         console.log("Imagen convertida a texto lista para enviar!");
     };
     
-    // Le decimos que lo lea como una URL de datos (Base64)
     reader.readAsDataURL(archivo);
 }
 
@@ -159,11 +153,17 @@ fetch(apiURL + 'rutas', {
 .catch(error => console.error('Error:', error));
 }
 
-/*
-async function asignarRuta(id) {
-    
+//Para cargar la lista de guias en el select al crear ruta
+function cargarGuias() {
+    fetch(apiURL + 'usuarios', { method: 'GET' })
+    .then(response => response.json())
+    .then(data => {
+        guias.value = data.filter(usuario => usuario.rol === 'guia');
+    })
+    .catch(error => console.error('Error cargando guías:', error));
 }
-*/
+
+cargarGuias();
 </script>
 <template>
     <div class="container py-5">
@@ -203,6 +203,19 @@ async function asignarRuta(id) {
                                     <label for="hora" class="form-label fw-bold">Hora</label>
                                     <input v-model="form.hora" type="time" id="hora" class="form-control" required>
                                 </div>
+                            </div>
+
+                            <div class="mb-3 p-3 bg-white border rounded shadow-sm">
+                                <label for="guiaSelect" class="form-label fw-bold text-secondary mb-1">
+                                    <i class="bi bi-person-badge"></i> Asignar Guía (Opcional)
+                                </label>
+                                <small class="d-block text-muted mb-2">Puedes asignarlo más tarde desde el panel de rutas.</small>
+                                <select v-model="form.guia_id" id="guiaSelect" class="form-select border-secondary">
+                                    <option value="">Dejar sin asignar por ahora</option>
+                                    <option v-for="guia in guias" :key="guia.id" :value="guia.id">
+                                        {{ guia.nombre }}
+                                    </option>
+                                </select>
                             </div>
                         </div>
 

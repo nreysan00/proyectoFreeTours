@@ -58,10 +58,12 @@ async function borrarUsu(id) {
     method: 'DELETE',
     })
     .then(response => response.json())
-    .then(data => console.log('Respuesta:', data))
+    .then(data => {
+        console.log('Respuesta:', data)
+        location.reload();
+    })
     .catch(error => console.error('Error:', error));
 
-    window.location.reload();
 }
 
 </script>

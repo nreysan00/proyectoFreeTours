@@ -24,38 +24,57 @@ const router = createRouter({
             // route level code-splitting
             // this generates a separate chunk (About.[hash].js) for this route
             // which is lazy-loaded when the route is visited.
-            component: Login
+            component: Login,
+            beforeEnter: (to, from, next) => {
+                const usuarioRaw = localStorage.getItem('sesion');
+
+                const ruta = to.name === 'login';
+
+                //Si el usuario ya tiene sesión y quiere ir a login lo mandamos al home
+                if (usuarioRaw && ruta) {
+                    next({ name: 'home' }); 
+                } else {
+                    next();
+                }
+            }
         },
         {
             path: '/register',
             name: 'register',
-            component: Registro
+            component: Registro,
+            beforeEnter: (to, from, next) => {
+                const usuarioRaw = localStorage.getItem('sesion');
+
+                const ruta = to.name === 'register';
+
+                //Si el usuario ya tiene sesión y quiere ir al registro lo mandamos al home
+                if (usuarioRaw && ruta) {
+                    next({ name: 'home' }); 
+                } else {
+                    next();
+                }
+            }
         },
         {
             path: '/micuenta/:email?',
             name: 'micuenta',
             component: HomeLogueado,
             beforeEnter: (to, from, next) => {
-                // 1. Leemos el "carnet" (el localStorage)
                 const usuarioRaw = localStorage.getItem('sesion');
 
-                // 2. Si no hay sesión (es null), lo echamos al login
                 if (usuarioRaw === null) {
                     alert("Debes iniciar sesión para acceder a esta página.");
                     return next({ name: 'login' }); 
                 }
 
-                // 3. ¡Bonus de seguridad extra! 
-                // Ya sabemos que está logueado, pero... ¿es SU cuenta?
                 const usuario = JSON.parse(usuarioRaw);
                 
                 // Comparamos el email de su sesión con el email que ha escrito en la URL (to.params.email)
                 if (usuario.email === to.params.email || usuario.rol === 'admin') {
-                    next(); // Todo coincide. ¡Adelante, abre la puerta!
+                    next();
                 } else {
-                    // Intentó espiar la cuenta de otro
                     alert("No tienes permiso para ver el perfil de otro usuario.");
-                    next({ path: '/' }); // Lo mandamos al inicio
+                    next({ path: '/' });
                 }
             }
         },
@@ -66,7 +85,7 @@ const router = createRouter({
             beforeEnter: (to, from, next) => {
                 const usuarioRaw = localStorage.getItem('sesion');
 
-                // 2. Si NO está logueado, puerta cerrada. Al login.
+                // 2. Si NO está logueado, se redirige al usuario al login
                 if (!usuarioRaw) {
                     alert("Debes ser administrador para acceder.");
                     return next({ name: 'login' }); 
@@ -74,12 +93,12 @@ const router = createRouter({
 
                 const usuario = JSON.parse(usuarioRaw);
 
-                // 4. Si SÍ puso un email en la URL, comprobamos que sea el suyo (o sea admin)
+                // 4. Si ha puesto un email en la URL, comprobamos que sea el suyo (o sea admin)
                 if (usuario.rol === 'admin') {
-                    next(); // Es su cuenta, le dejamos pasar
+                    next();
                 } else {
                     alert("Debes ser administrador para acceder.");
-                    next({ path: '/' }); // Intenta ver la de otro, al inicio
+                    next({ path: '/' });
                 }
             }
         },
@@ -90,7 +109,6 @@ const router = createRouter({
             beforeEnter: (to, from, next) => {
                 const usuarioRaw = localStorage.getItem('sesion');
 
-                // 2. Si NO está logueado, puerta cerrada. Al login.
                 if (!usuarioRaw) {
                     alert("Debes ser administrador para acceder.");
                     return next({ name: 'login' }); 
@@ -98,12 +116,12 @@ const router = createRouter({
 
                 const usuario = JSON.parse(usuarioRaw);
 
-                // 4. Si SÍ puso un email en la URL, comprobamos que sea el suyo (o sea admin)
+                // 4. Si ha puesto un email en la URL, comprobamos que sea el suyo (o sea admin)
                 if (usuario.rol === 'admin') {
-                    next(); // Es su cuenta, le dejamos pasar
+                    next();
                 } else {
                     alert("Debes ser administrador para acceder.");
-                    next({ path: '/' }); // Intenta ver la de otro, al inicio
+                    next({ path: '/' });
                 }
             }
         },
@@ -114,7 +132,6 @@ const router = createRouter({
             beforeEnter: (to, from, next) => {
                 const usuarioRaw = localStorage.getItem('sesion');
 
-                // 2. Si NO está logueado, puerta cerrada. Al login.
                 if (!usuarioRaw) {
                     alert("Debes ser administrador para acceder.");
                     return next({ name: 'login' }); 
@@ -122,12 +139,11 @@ const router = createRouter({
 
                 const usuario = JSON.parse(usuarioRaw);
 
-                // 4. Si SÍ puso un email en la URL, comprobamos que sea el suyo (o sea admin)
                 if (usuario.rol === 'admin') {
-                    next(); // Es su cuenta, le dejamos pasar
+                    next();
                 } else {
                     alert("Debes ser administrador para acceder.");
-                    next({ path: '/' }); // Intenta ver la de otro, al inicio
+                    next({ path: '/' });
                 }
             }
         },
@@ -144,14 +160,4 @@ const router = createRouter({
     ],
 })
 
-/*
-router.beforeEach(async (to, from) => {
-    if(
-        !usuarioAuntenticado && 
-        to.name !== 'login'
-    ) {
-        return {name: 'login'}
-    }
-})
-*/
 export default router

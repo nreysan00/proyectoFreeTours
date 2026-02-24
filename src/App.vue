@@ -66,12 +66,11 @@ function actualizaDatosSesion(usuario){
 .layout {
     display: flex;
     flex-direction: column;
-    height: 100vh;
-    overflow: hidden;
+    min-height: 100vh;
   }
 
   .main-content {
-  flex-grow: 1; /* Rellena todo el hueco entre el Navbar y el Footer */
+  flex: 1; /* Rellena todo el hueco entre el Navbar y el Footer */
   overflow-y: auto; /* Hace que SOLO esta parte tenga scroll */
   background-color: #f8f9fa; /* (Opcional) un color de fondo suavito */
   }
