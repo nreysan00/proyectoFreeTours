@@ -3,11 +3,14 @@
     import {ref} from 'vue'
     import { apiURL } from '@/main';
     import router from "@/router";
+import { mostrarToast } from '@/toast';
 
     const route = useRoute()
     const nombreUsuario = ref(route.params.email)
     const reservas = ref([]);
     const asignaciones = ref([]);
+    const numPlazas = ref(1);
+    const mostrarModal = ref(false);
 
     //Variables para pasar lista
     const mostrarModalLista = ref(false);
@@ -47,6 +50,29 @@
         .catch(error => console.error('Error:', error));
     }
 
+    async function modificarReserva(id) {
+        const reserva = prompt("Introduce el nuevo número de plazas para esta reserva:");
+        if(reserva === null) return;
+        const updatedReserva = {
+            reserva_id: id,
+            num_personas: parseInt(reserva)
+        };
+
+        fetch(apiURL + `reservas?id=${id}`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(updatedReserva)
+        })
+        .then(response => response.json())
+        .then(data => {
+            console.log('Reserva modificada:', data);
+            reservasUsuario(nombreUsuario.value);
+            mostrarToast('Reserva modificada correctamente', 'success');
+        })
+        .catch(error => console.error('Error:', error));
+    }
 
     async function cancelarReserva(id) {
         if (!confirm("¿Seguro que quieres cancelar esta reserva?")) return;
@@ -57,6 +83,7 @@
         .then(data => {
             console.log('Reserva cancelada:', data);
             reservasUsuario(nombreUsuario.value);
+            mostrarToast('Reserva cancelada correctamente', 'success');
         })
         .catch(error => console.error('Error:', error));
     }
@@ -75,7 +102,7 @@
 
     rol == 'guia' ?  asignacionesGuia(idGuia) : reservasUsuario(nombreUsuario.value);
 
-    //Funciones para pasar lsita
+    //Funciones para pasar lista
     function abrirModalLista(ruta) {
     rutaActiva.value = ruta;
     
@@ -117,6 +144,7 @@ async function guardarAsistencia() {
 </script>
 
 <template>
+    <!--Plantilla sacada de https://www.bootdey.com/snippets/view/bs4-account-tickets-->
     <div class="container mb-4 main-container">
     <div class="row">
         <div class="col-lg-4 pb-5">
@@ -194,6 +222,7 @@ async function guardarAsistencia() {
                                 <th scope="col">Localidad</th>
                                 <th scope="col">Fecha y Hora</th>
                                 <th scope="col">Ubicación</th>
+                                <th scope="col">Plazas Reservadas</th>
                                 <th scope="col" class="text-center pe-4">Acciones</th>
                             </tr>
                         </thead>
@@ -209,7 +238,11 @@ async function guardarAsistencia() {
                                     <small class="text-muted d-block">Lat: {{ reserva.ruta_latitud }}</small>
                                     <small class="text-muted d-block">Lng: {{ reserva.ruta_longitud }}</small>
                                 </td>
+                                <td class="text-center pe-4">{{ reserva.num_personas }}</td>
                                 <td class="text-center pe-4">
+                                    <button @click="modificarReserva(reserva.reserva_id)" class="btn btn-sm btn-outline-warning shadow-sm rounded-pill px-3" title="Modificar reserva">
+                                        <i class="bi bi-pencil me-1"></i> Modificar
+                                    </button>
                                     <button @click="cancelarReserva(reserva.reserva_id)" class="btn btn-sm btn-outline-danger shadow-sm rounded-pill px-3" title="Cancelar reserva">
                                         <i class="bi bi-x-circle me-1"></i> Cancelar
                                     </button>
@@ -256,15 +289,12 @@ async function guardarAsistencia() {
                                 
                                 <td class="text-center">
                                     <span class="badge bg-primary rounded-pill fs-6 mb-1">
-                                        {{ asignacion.reservas.reduce((total, reserva) => total + reserva.num_personas, 0) }} / 10
+                                        {{ asignacion.reservas.reduce((total, reserva) => total + reserva.num_personas, 0) }}
                                     </span>
                                     
                                     <div class="small">
-                                        <span v-if="asignacion.reservas.reduce((total, reserva) => total + reserva.num_personas, 0) < 10" class="text-success fw-bold">
-                                            <i class="bi bi-check-circle"></i> Disponible
-                                        </span>
-                                        <span v-else class="text-danger fw-bold">
-                                            <i class="bi bi-exclamation-triangle-fill"></i> Completo
+                                        <span v-if="asignacion.reservas.reduce((total, reserva) => total + reserva.num_personas, 0) <= 10" class="text-warning fw-bold">
+                                            <i class="bi bi-exclamation-triangle"></i> Menos de 10
                                         </span>
                                     </div>
                                 </td>

@@ -21,6 +21,7 @@ onMounted(() => {
     fetch(apiURL + 'rutas?id=' + idRuta)
         .then(response => response.json())
         .then(data => {
+            console.log('Ruta cargada:', data);
             ruta.value = data;
             cargando.value = false;
         })
@@ -66,15 +67,15 @@ function cerrarModal() {
     mostrarModal.value = false;
 }
 
-function confirmarReserva(numPlazas) {
-    if (numPlazas.value < 1) {
-        errorReserva.value = "Debes reservar al menos 1 plaza.";
+function confirmarReserva() {
+    if (numPlazas.value < 1 || numPlazas.value > 8) {
+        errorReserva.value = "Debes reservar al menos 1 plaza y como máximo 8.";
         return;
     }
 
     const reservaData = {
         email: usuarioSesion.value.email,
-        ruta_id: ruta.value.id,
+        ruta_id: route.params.id,
         num_personas: numPlazas.value
     };
 
@@ -217,9 +218,9 @@ function confirmarReserva(numPlazas) {
                                 v-model="numPlazas" 
                                 class="form-control form-control-lg text-center fw-bold text-primary" 
                                 min="1" 
-                                max="10"
+                                max="8"
                             >
-                            <div class="form-text mt-2 text-center">Puedes reservar un máximo de 10 plazas a la vez.</div>
+                            <div class="form-text mt-2 text-center">Puedes reservar un máximo de 8 plazas a la vez.</div>
                         </div>
 
                         <div v-if="errorReserva" class="alert alert-danger mt-3 py-2 text-center shadow-sm">
