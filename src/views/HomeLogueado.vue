@@ -181,69 +181,177 @@ async function guardarAsistencia() {
         </div>
         <!-- Orders Table-->
         <div v-if="rol == 'cliente'" class="col-lg-8 pb-5">
-            <div class="table-responsive">
-                <caption>Mis Reservas</caption>
-                <thead>
-                <tr>
-                <th scope="col">Ruta</th>
-                <th scope="col">Localidad</th>
-                <th scope="col">Fecha</th>
-                <th scope="col">Hora</th>
-                <th scope="col">Ubicación</th>
-                <th scope="col">Acciones</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr v-for="reserva in reservas" :key="reserva.id">
-                    <td>{{ reserva.ruta_titulo }}</td>
-                    <td>{{ reserva.ruta_localidad }}</td>
-                    <td>{{ reserva.ruta_fecha }}</td>
-                    <td>{{ reserva.ruta_hora }}</td>
-                    <td>{{ reserva.ruta_latitud }} - {{ reserva.ruta_longitud }}</td>
-                    <td>
-                        <button @click="cancelarReserva(reserva.reserva_id)" class="btn-danger">Cancelar Reserva</button>
-                    </td>
-                </tr>
-            </tbody>
+            <div class="card shadow-sm border-0 rounded-4 overflow-hidden">
+                <div class="card-header bg-primary text-white py-3">
+                    <h5 class="mb-0 fw-bold"><i class="bi bi-calendar-check me-2"></i> Mis Reservas</h5>
+                </div>
+                
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle mb-0">
+                        <thead class="table-light">
+                            <tr>
+                                <th scope="col" class="ps-4">Ruta</th>
+                                <th scope="col">Localidad</th>
+                                <th scope="col">Fecha y Hora</th>
+                                <th scope="col">Ubicación</th>
+                                <th scope="col" class="text-center pe-4">Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr v-for="reserva in reservas" :key="reserva.reserva_id">
+                                <td class="ps-4 fw-bold text-primary">{{ reserva.ruta_titulo }}</td>
+                                <td><i class="bi bi-geo-alt text-danger me-1"></i> {{ reserva.ruta_localidad }}</td>
+                                <td>
+                                    <div class="fw-bold">{{ reserva.ruta_fecha }}</div>
+                                    <small class="text-muted"><i class="bi bi-clock me-1"></i> {{ reserva.ruta_hora }}</small>
+                                </td>
+                                <td>
+                                    <small class="text-muted d-block">Lat: {{ reserva.ruta_latitud }}</small>
+                                    <small class="text-muted d-block">Lng: {{ reserva.ruta_longitud }}</small>
+                                </td>
+                                <td class="text-center pe-4">
+                                    <button @click="cancelarReserva(reserva.reserva_id)" class="btn btn-sm btn-outline-danger shadow-sm rounded-pill px-3" title="Cancelar reserva">
+                                        <i class="bi bi-x-circle me-1"></i> Cancelar
+                                    </button>
+                                </td>
+                            </tr>
+                            
+                            <tr v-if="reservas.length === 0">
+                                <td colspan="5" class="text-center py-5 text-muted">
+                                    <i class="bi bi-calendar-x fs-1 d-block mb-3"></i>
+                                    Aún no tienes ninguna reserva.
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
             </div>
         </div>
+
         <div v-else-if="rol == 'guia'" class="col-lg-8 pb-5">
-            <div class="table-responsive">
-                <caption>Mis Rutas</caption>
-                <thead>
-                <tr>
-                <th scope="col">Ruta</th>
-                <th scope="col">Localidad</th>
-                <th scope="col">Fecha</th>
-                <th scope="col">Hora</th>
-                <th scope="col">Ubicación</th>
-                <th scope="col">Num Reservas</th>
-                <th scope="col">Acciones</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr v-for="asignacion in asignaciones" :key="asignacion.id">
-                    <td>{{ asignacion.ruta_titulo }}</td>
-                    <td>{{ asignacion.ruta_localidad }}</td>
-                    <td>{{ asignacion.ruta_fecha }}</td>
-                    <td>{{ asignacion.ruta_hora }}</td>
-                    <td>{{ asignacion.ruta_latitud }} - {{ asignacion.ruta_longitud }}</td>
-                    <td>{{ asignacion.reservas.reduce((total, reserva) => total + reserva.num_personas, 0) }}</td>
-                    <td v-if="asignacion.reservas[0].num_personas < 10">
-                        <i class="bi bi-exclamation-triangle text-warning"></i>
-                        <button @click="abrirModalLista(asignacion)" class="btn btn-success">Pasar Lista</button>
-                    </td>
-                    <td v-else-if="asignacion.reservas[0].num_personas == 10">
-                        <span class="text-danger">Máximo de reservas alcanzado</span>
-                        <button @click="abrirModalLista(asignacion)" class="btn btn-success">Pasar Lista</button>
-                    </td>
-                    <td v-else>
-                        <button @click="abrirModalLista(asignacion)" class="btn btn-success">Pasar Lista</button>
-                    </td>
-                </tr>
-            </tbody>
+            <div class="card shadow-sm border-0 rounded-4 overflow-hidden">
+                <div class="card-header bg-success text-white py-3">
+                    <h5 class="mb-0 fw-bold"><i class="bi bi-signpost-split me-2"></i> Mis Rutas Asignadas</h5>
+                </div>
+                
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle mb-0">
+                        <thead class="table-light">
+                            <tr>
+                                <th scope="col" class="ps-4">Ruta</th>
+                                <th scope="col">Localidad</th>
+                                <th scope="col">Fecha y Hora</th>
+                                <th scope="col" class="text-center">Estado (Plazas)</th>
+                                <th scope="col" class="text-center pe-4">Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr v-for="asignacion in asignaciones" :key="asignacion.id">
+                                <td class="ps-4 fw-bold text-success">{{ asignacion.ruta_titulo }}</td>
+                                <td><i class="bi bi-geo-alt text-danger me-1"></i> {{ asignacion.ruta_localidad }}</td>
+                                <td>
+                                    <div class="fw-bold">{{ asignacion.ruta_fecha }}</div>
+                                    <small class="text-muted"><i class="bi bi-clock me-1"></i> {{ asignacion.ruta_hora }}</small>
+                                </td>
+                                
+                                <td class="text-center">
+                                    <span class="badge bg-primary rounded-pill fs-6 mb-1">
+                                        {{ asignacion.reservas.reduce((total, reserva) => total + reserva.num_personas, 0) }} / 10
+                                    </span>
+                                    
+                                    <div class="small">
+                                        <span v-if="asignacion.reservas.reduce((total, reserva) => total + reserva.num_personas, 0) < 10" class="text-success fw-bold">
+                                            <i class="bi bi-check-circle"></i> Disponible
+                                        </span>
+                                        <span v-else class="text-danger fw-bold">
+                                            <i class="bi bi-exclamation-triangle-fill"></i> Completo
+                                        </span>
+                                    </div>
+                                </td>
+                                
+                                <td class="text-center pe-4">
+                                    <button @click="abrirModalLista(asignacion)" class="btn btn-sm btn-success shadow-sm rounded-pill px-3">
+                                        <i class="bi bi-list-check me-1"></i> Pasar Lista
+                                    </button>
+                                </td>
+                            </tr>
+                            
+                            <tr v-if="asignaciones.length === 0">
+                                <td colspan="5" class="text-center py-5 text-muted">
+                                    <i class="bi bi-inbox fs-1 d-block mb-3"></i>
+                                    No tienes ninguna ruta asignada por el momento.
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
             </div>
         </div>
+        <div v-else-if="rol == 'admin'" class="col-lg-8 pb-5">
+    <div class="card shadow-sm border-0 rounded-4 overflow-hidden">
+        
+        <div class="card-header bg-dark text-white py-3">
+            <h5 class="mb-0 fw-bold"><i class="bi bi-shield-lock-fill me-2"></i> Panel de Administración</h5>
+        </div>
+        
+        <div class="table-responsive">
+                <table class="table table-hover align-middle mb-0">
+                    <thead class="table-light">
+                        <tr>
+                            <th scope="col" class="ps-4">Módulo</th>
+                            <th scope="col">Descripción</th>
+                            <th scope="col" class="text-center pe-4">Acceso</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        
+                        <tr>
+                            <td class="ps-4 fw-bold text-dark">
+                                <i class="bi bi-people-fill text-primary me-2 fs-5"></i> Usuarios
+                            </td>
+                            <td class="text-muted small">
+                                Gestionar cuentas, cambiar roles y eliminar usuarios.
+                            </td>
+                            <td class="text-center pe-4">
+                                <RouterLink to="/admin" class="btn btn-sm btn-outline-dark shadow-sm rounded-pill px-3 w-100">
+                                    Entrar <i class="bi bi-arrow-right-short"></i>
+                                </RouterLink>
+                            </td>
+                        </tr>
+                        
+                        <tr>
+                            <td class="ps-4 fw-bold text-dark">
+                                <i class="bi bi-map-fill text-success me-2 fs-5"></i> Crear Ruta
+                            </td>
+                            <td class="text-muted small">
+                                Añadir nuevas rutas a la página con posibilidad de asignar guía (Opcional).
+                            </td>
+                            <td class="text-center pe-4">
+                                <RouterLink to="/nuevaruta" class="btn btn-sm btn-outline-dark shadow-sm rounded-pill px-3 w-100">
+                                    Entrar <i class="bi bi-arrow-right-short"></i>
+                                </RouterLink>
+                            </td>
+                        </tr>
+                        
+                        <tr>
+                            <td class="ps-4 fw-bold text-dark">
+                                <i class="bi bi-list-task text-danger me-2 fs-5"></i> Gestión de Rutas
+                            </td>
+                            <td class="text-muted small">
+                                Ver el todas las rutas, asingnar guías y cancelar rutas.
+                            </td>
+                            <td class="text-center pe-4">
+                                <RouterLink to="/rutas" class="btn btn-sm btn-outline-dark shadow-sm rounded-pill px-3 w-100">
+                                    Entrar <i class="bi bi-arrow-right-short"></i>
+                                </RouterLink>
+                            </td>
+                        </tr>
+
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
     </div>
     <div v-if="mostrarModalLista" class="modal-backdrop fade show" style="opacity: 0.5;"></div>
 

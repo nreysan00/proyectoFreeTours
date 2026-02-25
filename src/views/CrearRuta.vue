@@ -1,5 +1,5 @@
 <script setup>
-import {ref, onMounted} from "vue"
+import {ref, onMounted, computed} from "vue"
 import router from "@/router";
 import {apiURL} from "@/main";
 import L from 'leaflet';
@@ -18,6 +18,14 @@ const form = ref({ titulo: '', localidad: '', descripcion: '', foto: '', fecha: 
 const guias = ref([]);
 const error = ref('');
 
+// Variable para controlar la fecha mínima seleccionable en el input de fecha
+const fechaMinima = (() => {
+    const hoy = new Date();
+    const yyyy = hoy.getFullYear();
+    const mm = String(hoy.getMonth() + 1).padStart(2, '0');
+    const dd = String(hoy.getDate()).padStart(2, '0');
+    return `${yyyy}-${mm}-${dd}`;
+})();
 //Variables para el buscador
 const busqueda = ref(''); 
 const buscando = ref(false); 
@@ -190,7 +198,7 @@ cargarGuias();
                             <div class="row">
                                 <div class="col-6 mb-3">
                                     <label for="fecha" class="form-label fw-bold">Fecha</label>
-                                    <input v-model="form.fecha" type="date" id="fecha" class="form-control" required aria-required="true">
+                                    <input v-model="form.fecha" type="date" id="fecha" class="form-control" :min="fechaMinima" required aria-required="true">
                                 </div>
                                 <div class="col-6 mb-3">
                                     <label for="hora" class="form-label fw-bold">Hora</label>

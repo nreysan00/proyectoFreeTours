@@ -4,11 +4,12 @@ import router from "@/router";
 import {apiURL} from "@/main";
 
 const emit = defineEmits(["registroUsu"]);
-const form = ref({ nombre: '', email: '', contraseña: '' });
+const form = ref({ nombre: '', email: '', contraseña: '', repetirContraseña: ''});
 const error = ref('');
 const usuarioRegistrado = ref(false);
 
 const mostrarPassword = ref(false);
+const mostrarPasswordRepetida = ref(false);
 
 const formatoEmailValido = computed(() => {
     /* Si está vacío, no lo evaluamos todavía como "formato inválido" para la vista, 
@@ -22,11 +23,11 @@ const formatoEmailValido = computed(() => {
 
 const inputActivo = ref(false);
 
-const faltaMail = computed(() => !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.value.email));
 const faltaLongitud = computed(() => form.value.contraseña.length < 8);
 const faltaMayuscula = computed(() => !/[A-Z]/.test(form.value.contraseña));
 const faltaMinuscula = computed(() => !/[a-z]/.test(form.value.contraseña));
 const faltaNumero = computed(() => !/[0-9]/.test(form.value.contraseña));
+const contraseñasCoinciden = computed(() => form.value.contraseña === form.value.repetirContraseña);
 
 const faltaAlgo = computed(() => 
     form.value.nombre.trim() === '' ||
@@ -35,12 +36,13 @@ const faltaAlgo = computed(() =>
     faltaLongitud.value || 
     faltaMayuscula.value || 
     faltaMinuscula.value || 
-    faltaNumero.value
+    faltaNumero.value ||
+    !contraseñasCoinciden.value
 );
 
 async function registroUsuario(){
     if (faltaAlgo.value) {
-        error.value = "La contraseña no cumple con los requisitos mínimos de seguridad.";
+        error.value = "La contraseña no cumple con los requisitos mínimos de seguridad o las contraseñas no coinciden.";
         return;
     }
 
@@ -146,6 +148,34 @@ async function registroUsuario(){
                                 tabindex="-1"
                             >
                                 <i :class="mostrarPassword ? 'bi bi-eye-slash' : 'bi bi-eye'"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="repetirPassword" class="form-label">Repetir contraseña</label>
+                        <div>
+                            <ul class="mb-0 text-danger small" style="padding-left: 20px;">
+                                <li v-if="!contraseñasCoinciden">Las contraseñas no coinciden</li>
+                            </ul>
+                        </div>
+                        <div class="input-group">
+                            <input 
+                                id="repetirPassword"
+                                v-model="form.repetirContraseña" 
+                                :type="mostrarPasswordRepetida ? 'text' : 'password'" 
+                                class="form-control" 
+                                placeholder="Repite tu contraseña"
+                                aria-required="true"
+                                required
+                            />
+                            <button 
+                                class="btn btn-outline-secondary" 
+                                type="button" 
+                                @click="mostrarPasswordRepetida = !mostrarPasswordRepetida"
+                                tabindex="-1"
+                            >
+                                <i :class="mostrarPasswordRepetida ? 'bi bi-eye-slash' : 'bi bi-eye'"></i>
                             </button>
                         </div>
                     </div>

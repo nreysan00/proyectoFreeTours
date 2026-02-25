@@ -166,54 +166,55 @@ const accionMenosVolumen = () => {
                 
                 <h3 class="text-center mb-4 text-primary fw-bold">Descubre la experiencia FreeTour</h3>
                 
-                <div class="ratio ratio-16x9 shadow-lg rounded overflow-hidden border">
-                    <video ref="medio" class="bg-dark">
-                        <source :src="'tours.mp4'" type="video/mp4">
-                        <source :src="'tours.webm'" type="video/webm">
-                        Tu navegador no soporta la reproducción de vídeos.
-                    </video>
-                </div>
-                
-                <div class="d-flex align-items-center justify-content-center gap-3 mt-4 flex-wrap p-3 bg-light rounded shadow-sm border">
+                <div class="card shadow-lg border-0 rounded-4 overflow-hidden">
                     
-                    <button class="btn btn-outline-secondary rounded-circle" @click="accionReiniciar" title="Reiniciar" aria-label="Reiniciar vídeo">
-                        <i class="bi bi-arrow-counterclockwise fs-5"></i>
-                    </button>
-
-                    <div class="btn-group shadow-sm">
-                        <button class="btn btn-primary" @click="accionRetrasar" title="Retrasar" aria-label="Retrasar vídeo">
-                            <i class="bi bi-rewind-fill"></i>
-                        </button>
-                        
-                        <button class="btn btn-primary px-4" @click="accionPlay" title="Reproducir/Pausar" aria-label="Dale al play">
-                            <i class="bi bi-play-fill fs-4"></i>
-                        </button>
-                        
-                        <button class="btn btn-primary" @click="accionAdelantar" title="Adelantar" aria-label="Adelantar">
-                            <i class="bi bi-fast-forward-fill"></i>
-                        </button>
+                    <div class="ratio ratio-16x9 bg-dark">
+                        <video ref="medio" class="w-100 h-100" style="object-fit: cover;">
+                            <source :src="'tours.mp4'" type="video/mp4">
+                            <source :src="'tours.webm'" type="video/webm">
+                            Tu navegador no soporta la reproducción de vídeos.
+                        </video>
                     </div>
-
-                    <div class="text-muted opacity-50 d-none d-sm-block">|</div>
-
-                    <button class="btn btn-outline-danger rounded-circle" @click="accionSilenciar" title="Silenciar" aria-label="Silenciar">
-                        <i class="bi bi-volume-mute-fill fs-5"></i>
-                    </button>
-
-                    <div class="input-group shadow-sm" style="width: auto;">
-                        <button class="btn btn-secondary" @click="accionMenosVolumen" title="Bajar volumen" aria-label="Menos volumen">
-                            <i class="bi bi-volume-down-fill"></i>
-                        </button>
+                    
+                    <div class="card-body bg-light border-top p-3 d-flex flex-wrap align-items-center justify-content-center gap-3">
                         
-                        <span class="input-group-text bg-white border-secondary text-secondary fw-bold px-2">Vol</span>
-                        
-                        <button class="btn btn-secondary" @click="accionMasVolumen" title="Subir volumen" aria-label="Más volumen">
-                            <i class="bi bi-volume-up-fill"></i>
+                        <button class="btn btn-outline-secondary rounded-circle" @click="accionReiniciar" title="Reiniciar" aria-label="Reiniciar vídeo">
+                            <i class="bi bi-arrow-counterclockwise fs-5"></i>
                         </button>
-                    </div>
 
-                </div>
-            </div>
+                        <div class="btn-group shadow-sm">
+                            <button class="btn btn-primary" @click="accionRetrasar" title="Retrasar" aria-label="Retrasar vídeo">
+                                <i class="bi bi-rewind-fill"></i>
+                            </button>
+                            
+                            <button class="btn btn-primary px-4" @click="accionPlay" title="Reproducir/Pausar" aria-label="Dale al play">
+                                <i class="bi bi-play-fill fs-4"></i>
+                            </button>
+                            
+                            <button class="btn btn-primary" @click="accionAdelantar" title="Adelantar" aria-label="Adelantar">
+                                <i class="bi bi-fast-forward-fill"></i>
+                            </button>
+                        </div>
+
+                        <div class="text-muted opacity-50 d-none d-sm-block">|</div>
+
+                        <button class="btn btn-outline-danger rounded-circle" @click="accionSilenciar" title="Silenciar" aria-label="Silenciar">
+                            <i class="bi bi-volume-mute-fill fs-5"></i>
+                        </button>
+
+                        <div class="input-group shadow-sm" style="width: auto;">
+                            <button class="btn btn-secondary" @click="accionMenosVolumen" title="Bajar volumen" aria-label="Menos volumen">
+                                <i class="bi bi-volume-down-fill"></i>
+                            </button>
+                            
+                            <span class="input-group-text bg-white border-secondary text-secondary fw-bold px-2">Vol</span>
+                            
+                            <button class="btn btn-secondary" @click="accionMasVolumen" title="Subir volumen" aria-label="Más volumen">
+                                <i class="bi bi-volume-up-fill"></i>
+                            </button>
+                        </div>
+
+                    </div> </div> </div>
         </div>
 
             <div class="row mb-5 justify-content-center">
